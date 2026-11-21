@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>YouTube Downloader</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#030b2e;
+color:#fff;
+overflow-x:hidden;
+}
+
+.hero{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:30px;
+position:relative;
+}
+
+.hero::before{
+content:"";
+position:absolute;
+width:600px;
+height:600px;
+background:#ff0000;
+filter:blur(180px);
+opacity:.15;
+border-radius:50%;
+top:-200px;
+right:-200px;
+}
+
+.container{
+max-width:1200px;
+width:100%;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:60px;
+align-items:center;
+z-index:2;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:25px;
+}
+
+.logo-icon{
+width:55px;
+height:40px;
+background:#ff0000;
+border-radius:12px;
+position:relative;
+}
+
+.logo-icon::before{
+content:"";
+position:absolute;
+left:22px;
+top:10px;
+border-left:14px solid #fff;
+border-top:9px solid transparent;
+border-bottom:9px solid transparent;
+}
+
+.logo-text h1{
+font-size:32px;
+font-weight:900;
+}
+
+.logo-text span{
+color:#94a3b8;
+font-size:15px;
+}
+
+.hero h2{
+font-size:64px;
+line-height:1.05;
+margin-bottom:20px;
+}
+
+.hero p{
+color:#b8c3d9;
+font-size:18px;
+line-height:1.7;
+margin-bottom:35px;
+}
+
+.search-box{
+background:#fff;
+padding:10px;
+border-radius:60px;
+display:flex;
+box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+
+.search-box input{
+flex:1;
+border:none;
+outline:none;
+padding:18px;
+font-size:16px;
+border-radius:40px;
+}
+
+.search-box button{
+border:none;
+padding:18px 35px;
+background:#ff0000;
+color:#fff;
+border-radius:40px;
+cursor:pointer;
+font-weight:700;
+}
+
+.mockup{
+background:#fff;
+border-radius:30px;
+padding:25px;
+box-shadow:0 40px 80px rgba(0,0,0,.4);
+}
+
+.mockup-screen{
+height:420px;
+border-radius:20px;
+background:linear-gradient(
+135deg,
+#ececec,
+#dcdcdc
+);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:30px;
+color:#222;
+}
+
+.mockup-screen h3{
+font-size:42px;
+margin-bottom:15px;
+}
+
+.mockup-screen p{
+color:#444;
+}
+
+@media(max-width:900px){
+
+.container{
+grid-template-columns:1fr;
+}
+
+.hero h2{
+font-size:42px;
+}
+
+.search-box{
+flex-direction:column;
+border-radius:25px;
+}
+
+.search-box button{
+width:100%;
+margin-top:10px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+
+<div class="container">
+
+<div>
+
+<div class="logo">
+
+<div class="logo-icon"></div>
+
+<div class="logo-text">
+<h1>YOUTUBE</h1>
+<span>DOWNLOADER</span>
+</div>
+
+</div>
+
+<h2>
+Fast & Simple<br>
+YouTube Downloader
+</h2>
+
+<p>
+Paste your video URL and enjoy a clean,
+modern and responsive experience.
+</p>
+
+<div class="search-box">
+<input
+type="text"
+placeholder="Paste YouTube URL here..."
+>
+<button>
+Download
+</button>
+</div>
+
+</div>
+
+<div class="mockup">
+
+<div class="mockup-screen">
+
+<div>
+<h3>Modern UI</h3>
+<p>
+Premium design inspired by modern landing pages.
+</p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</body>
+</html>
