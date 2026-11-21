@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Downloader</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #f3f4f6; color: #111827; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .card { width: 100%; max-width: 520px; background: #ffffff; border-radius: 20px; padding: 28px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .logo-box { background: #dc2626; color: #fff; font-weight: 800; padding: 6px 12px; border-radius: 10px; font-size: 14px; letter-spacing: 0.5px; }
+    .brand-title { font-weight: 700; font-size: 18px; }
+    h1 { font-size: 26px; line-height: 1.2; margin-bottom: 8px; }
+    p.sub { color: #6b7280; font-size: 14px; margin-bottom: 22px; }
+    .input-group { display: flex; gap: 10px; background: #f9fafb; border: 1px solid #e5e7eb; padding: 8px; border-radius: 999px; margin-bottom: 18px; }
+    .input-group input { flex: 1; border: none; background: transparent; padding: 10px 14px; font-size: 14px; outline: none; }
+    .btn-download { background: #dc2626; color: #fff; border: none; padding: 12px 20px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .btn-download:hover { background: #b91c1c; }
+    .formats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
+    .fmt { padding: 8px; text-align: center; border-radius: 10px; background: #f3f4f6; font-size: 12px; font-weight: 600; color: #374151; }
+    .footer-bar { background: #18181b; color: #f4f4f5; padding: 12px 16px; border-radius: 14px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="logo-box">▶ YT</div>
+      <div class="brand-title">YOUTUBE DOWNLOADER</div>
+    </div>
+    <h1>Online Video Downloader</h1>
+    <p class="sub">Paste a link and choose your preferred video or audio quality.</p>
+
+    <div class="input-group">
+      <input type="url" id="videoUrl" placeholder="Paste video link here..." />
+      <button class="btn-download" type="button" id="dlBtn">Download</button>
+    </div>
+
+    <div class="formats">
+      <div class="fmt">1080p</div>
+      <div class="fmt">720p</div>
+      <div class="fmt">480p</div>
+      <div class="fmt">MP3</div>
+    </div>
+
+    <div class="footer-bar">
+      <span>Ready for backend</span>
+      <span>v0.1</span>
+    </div>
+  </div>
+</body>
+</html>
