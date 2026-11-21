@@ -14,12 +14,16 @@
     h1 { font-size: 26px; line-height: 1.2; margin-bottom: 8px; }
     p.sub { color: #6b7280; font-size: 14px; margin-bottom: 22px; }
     .input-group { display: flex; gap: 10px; background: #f9fafb; border: 1px solid #e5e7eb; padding: 8px; border-radius: 999px; margin-bottom: 18px; }
-    .input-group input { flex: 1; border: none; background: transparent; padding: 10px 14px; font-size: 14px; outline: none; }
-    .btn-download { background: #dc2626; color: #fff; border: none; padding: 12px 20px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .input-group:focus-within { border-color: #dc2626; }
+    .input-group input { flex: 1; border: none; background: transparent; padding: 10px 14px; font-size: 14px; outline: none; color: #111827; }
+    .btn-download { background: #dc2626; color: #fff; border: none; padding: 12px 20px; border-radius: 999px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.15s ease; }
     .btn-download:hover { background: #b91c1c; }
     .formats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
-    .fmt { padding: 8px; text-align: center; border-radius: 10px; background: #f3f4f6; font-size: 12px; font-weight: 600; color: #374151; }
-    .footer-bar { background: #18181b; color: #f4f4f5; padding: 12px 16px; border-radius: 14px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .fmt { padding: 10px 8px; text-align: center; border-radius: 10px; background: #f3f4f6; font-size: 12px; font-weight: 600; color: #374151; border: 1px solid transparent; cursor: pointer; transition: all 0.15s ease; }
+    .fmt:hover { background: #e5e7eb; }
+    .fmt.active { background: #fef2f2; color: #dc2626; border-color: #dc2626; }
+    .footer-bar { background: #18181b; color: #f4f4f5; padding: 12px 16px; border-radius: 14px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    #statusText { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   </style>
 </head>
 <body>
@@ -32,21 +36,58 @@
     <p class="sub">Paste a link and choose your preferred video or audio quality.</p>
 
     <div class="input-group">
-      <input type="url" id="videoUrl" placeholder="Paste video link here..." />
+      <input type="url" id="videoUrl" placeholder="Paste video link here..." autocomplete="off" />
       <button class="btn-download" type="button" id="dlBtn">Download</button>
     </div>
 
-    <div class="formats">
-      <div class="fmt">1080p</div>
-      <div class="fmt">720p</div>
-      <div class="fmt">480p</div>
-      <div class="fmt">MP3</div>
+    <div class="formats" id="formatList">
+      <button type="button" class="fmt active" data-format="1080p">1080p</button>
+      <button type="button" class="fmt" data-format="720p">720p</button>
+      <button type="button" class="fmt" data-format="480p">480p</button>
+      <button type="button" class="fmt" data-format="MP3">MP3</button>
     </div>
 
     <div class="footer-bar">
-      <span>Ready for backend</span>
-      <span>v0.1</span>
+      <span id="statusText">Selected: 1080p • Ready</span>
+      <span>v0.2</span>
     </div>
   </div>
+
+  <script>
+    const urlInput = document.getElementById('videoUrl');
+    const dlBtn = document.getElementById('dlBtn');
+    const statusText = document.getElementById('statusText');
+    const fmtButtons = document.querySelectorAll('.fmt');
+
+    let selectedFormat = '1080p';
+
+    fmtButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        fmtButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedFormat = btn.dataset.format;
+        statusText.textContent = `Selected: ${selectedFormat} • Ready`;
+      });
+    });
+
+    dlBtn.addEventListener('click', () => {
+      const rawUrl = urlInput.value.trim();
+      if (!rawUrl) {
+        statusText.textContent = 'Please paste a valid link first.';
+        urlInput.focus();
+        return;
+      }
+
+      try {
+        new URL(rawUrl);
+      } catch {
+        statusText.textContent = 'Invalid URL format. Please check the link.';
+        urlInput.focus();
+        return;
+      }
+
+      statusText.textContent = `Queued (${selectedFormat}) — connect backend API next`;
+    });
+  </script>
 </body>
 </html>
