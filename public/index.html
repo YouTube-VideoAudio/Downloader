@@ -224,6 +224,8 @@ footer{margin-top:40px}
 .btn.wait{opacity:.7;pointer-events:none}
 .app header{padding-top:max(env(safe-area-inset-top,0px),34px)}
 .app footer{padding-bottom:max(env(safe-area-inset-bottom,0px),24px)}
+.app body::before{content:"";position:fixed;top:0;left:0;right:0;height:max(env(safe-area-inset-top,0px),34px);background:#161616;z-index:60}
+.app .modal{padding-top:max(env(safe-area-inset-top,0px),34px)}
 </style></head><body>
 
 <div class="hero">
