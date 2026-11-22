@@ -119,7 +119,10 @@ public class YtDlpPlugin extends Plugin {
                 out.put("file", outName);
                 call.resolve(out);
             } catch (Exception e) {
-                call.reject("Download failed. Try another quality or video.");
+                android.util.Log.e("YtDlp", "download failed", e);
+                String m = String.valueOf(e.getMessage());
+                if (m.length() > 350) m = m.substring(0, 350);
+                call.reject("Download failed: " + m);
             } finally {
                 File[] left = dir.listFiles((d, nm) -> nm.startsWith(prefix));
                 if (left != null) for (File x : left) x.delete();
