@@ -2,5 +2,8 @@
   "appId": "com.videoaudio.downloader",
   "appName": "Video Downloader",
   "webDir": "public",
-  "server": { "androidScheme": "https" }
+  "server": {
+    "url": "https://youtube-videoaudio.github.io/Downloader/",
+    "androidScheme": "https"
+  }
 }

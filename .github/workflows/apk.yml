@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['native/**', 'capacitor.config.json', '.github/workflows/apk.yml', 'public/**']
+    paths: ['native/**', 'capacitor.config.json', '.github/workflows/apk.yml']
 jobs:
   build:
     runs-on: ubuntu-latest
