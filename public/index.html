@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#d6293e">
 <meta name="description" content="Free online video downloader. Paste a link, choose a format and download.">
 <meta property="og:title" content="YouTube Video Downloader">
@@ -222,6 +222,8 @@ footer{margin-top:40px}
 .dlmsg{font-size:13px;color:#666;text-align:center;margin:10px 0 0}
 .dlmsg:empty{display:none}
 .btn.wait{opacity:.7;pointer-events:none}
+.app header{padding-top:max(env(safe-area-inset-top,0px),34px)}
+.app footer{padding-bottom:max(env(safe-area-inset-bottom,0px),24px)}
 </style></head><body>
 
 <div class="hero">
@@ -298,6 +300,7 @@ footer{margin-top:40px}
 const $=s=>document.querySelector(s);
 const isApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
 const YT=()=>window.Capacitor.Plugins.YtDlp;
+if(isApp)document.documentElement.classList.add('app');
 const getId=u=>{const m=u.match(/(?:youtu\.be\/|v=|shorts\/|live\/|embed\/)([\w-]{11})/);return m?m[1]:null};
 const fallback=[['MP4 - 720p','mp4_720'],['MP4 - 480p','mp4_480'],['MP4 - 360p','mp4_360'],['MP3 - Audio only','mp3']];
 let curId='';
