@@ -3,7 +3,7 @@
   "appName": "Video Downloader",
   "webDir": "public",
   "server": {
-    "url": "https://youtube-videoaudio.github.io/Downloader/",
+    "url": "https://youtube-videoaudio.github.io/Downloader/app.html",
     "androidScheme": "https"
   }
 }

@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths: ['native/**', 'capacitor.config.json', '.github/workflows/apk.yml']
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,3 +35,11 @@ jobs:
         with:
           name: app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk VideoDownloader.apk
+          gh release view latest >/dev/null 2>&1 || gh release create latest --title "Video Downloader" --notes "Latest build" --latest
+          gh release upload latest VideoDownloader.apk --clobber
