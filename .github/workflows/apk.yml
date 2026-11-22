@@ -9,6 +9,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      KS_FILE: ${{ github.workspace }}/release.keystore
+      KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+      KS_ALIAS: ${{ secrets.KEY_ALIAS }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,6 +32,11 @@ jobs:
           rsvg-convert -w 1024 -h 1024 native/icon-background.svg -o assets/icon-background.png
       - run: npm install -D @capacitor/assets
       - run: npx @capacitor/assets generate --android
+      - name: Prepare signing key
+        env:
+          KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS_B64" ]; then echo "$KS_B64" | base64 -d > "$KS_FILE"; fi
       - run: bash native/patch.sh
       - run: npx cap sync android
       - run: cd android && chmod +x gradlew && ./gradlew assembleDebug

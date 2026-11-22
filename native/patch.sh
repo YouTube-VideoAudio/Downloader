@@ -28,3 +28,12 @@ echo "--- patched ---"
 grep -n "youtubedl\|useLegacyPackaging\|abiFilters" $G
 grep -n "minSdkVersion" android/variables.gradle
 grep -n "extractNativeLibs" android/app/src/main/AndroidManifest.xml
+
+G=android/app/build.gradle
+if [ -n "$KS_PASS" ] && [ -f "$KS_FILE" ]; then
+  sed -i '0,/^android {/s//android {\n    signingConfigs { release { storeFile file(System.getenv("KS_FILE")); storePassword System.getenv("KS_PASS"); keyAlias System.getenv("KS_ALIAS"); keyPassword System.getenv("KS_PASS") } }/' $G
+  sed -i '0,/buildTypes {/s//buildTypes {\n        debug { signingConfig signingConfigs.release }/' $G
+  echo "signing: custom key"
+else
+  echo "signing: default debug key"
+fi
