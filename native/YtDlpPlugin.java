@@ -147,7 +147,7 @@ public class YtDlpPlugin extends Plugin {
                 ContentValues v = new ContentValues();
                 v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
                 v.put(MediaStore.MediaColumns.MIME_TYPE, ext.equals("mp3") ? "audio/mpeg" : "video/mp4");
-                v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+                v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Video Downloader");
                 ContentResolver r = getContext().getContentResolver();
                 Uri u = r.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
                 if (u == null) throw new Exception("save failed");

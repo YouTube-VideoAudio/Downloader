@@ -355,7 +355,7 @@ $('#dl').addEventListener('click',e=>{
     a.textContent='Preparing your file...';a.classList.add('wait');
     m.textContent='This can take a minute for long videos.';
     YT().download({id:curId,format:$('#q').value})
-      .then(r=>{m.textContent='Saved to Downloads: '+r.file})
+      .then(r=>{m.textContent='Saved to Downloads/Video Downloader: '+r.file})
       .catch(er=>{m.textContent=(er&&er.message)||'Download failed. Please try again.'})
       .finally(()=>{dlBusy=false;a.textContent=label;a.classList.remove('wait')});
     return;
