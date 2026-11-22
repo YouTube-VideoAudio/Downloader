@@ -122,6 +122,10 @@ public class YtDlpPlugin extends Plugin {
                 ensureInit();
                 YoutubeDLRequest req = new YoutubeDLRequest("https://www.youtube.com/watch?v=" + id);
                 req.addOption("--no-playlist");
+                req.addOption("--force-ipv4");
+                req.addOption("--retries", "3");
+                req.addOption("--fragment-retries", "3");
+                req.addOption("--socket-timeout", "20");
                 req.addOption("-o", new File(dir, prefix + "%(ext)s").getAbsolutePath());
                 if (format.equals("mp3")) {
                     req.addOption("-x");
