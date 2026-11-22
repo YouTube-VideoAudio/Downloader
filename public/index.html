@@ -296,10 +296,13 @@ footer{margin-top:40px}
 
 <script>
 const $=s=>document.querySelector(s);
+const isApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+const YT=()=>window.Capacitor.Plugins.YtDlp;
 const getId=u=>{const m=u.match(/(?:youtu\.be\/|v=|shorts\/|live\/|embed\/)([\w-]{11})/);return m?m[1]:null};
 const fallback=[['MP4 - 720p','mp4_720'],['MP4 - 480p','mp4_480'],['MP4 - 360p','mp4_360'],['MP3 - Audio only','mp3']];
 let curId='';
 async function getInfo(id){
+  if(isApp){try{return await YT().info({id})}catch(e){return {error:(e&&e.message)||'Could not fetch this video.'}}}
   try{
     const r=await fetch('/api/info?id='+id);
     const j=await r.json().catch(()=>({}));
@@ -338,6 +341,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 let dlBusy=false;
 $('#dl').addEventListener('click',e=>{
   e.preventDefault();
+  if(isApp){
+    if(dlBusy)return;
+    dlBusy=true;
+    const a=$('#dl'),m=$('#dlmsg'),label=a.textContent;
+    a.textContent='Preparing your file...';a.classList.add('wait');
+    m.textContent='This can take a minute for long videos.';
+    YT().download({id:curId,format:$('#q').value})
+      .then(r=>{m.textContent='Saved to Downloads: '+r.file})
+      .catch(er=>{m.textContent=(er&&er.message)||'Download failed. Please try again.'})
+      .finally(()=>{dlBusy=false;a.textContent=label;a.classList.remove('wait')});
+    return;
+  }
   if(dlBusy)return;
   dlBusy=true;
   const tk=Math.random().toString(36).slice(2,12);
