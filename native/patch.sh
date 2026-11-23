@@ -20,7 +20,7 @@ JAVA
 G=android/app/build.gradle
 sed -i '0,/^dependencies {/s//dependencies {\n    implementation "io.github.junkfood02.youtubedl-android:library:0.18.1"\n    implementation "io.github.junkfood02.youtubedl-android:ffmpeg:0.18.1"/' $G
 sed -i '0,/^android {/s//android {\n    packaging { jniLibs { useLegacyPackaging = true } }/' $G
-sed -i '0,/defaultConfig {/s//defaultConfig {\n        ndk { abiFilters "arm64-v8a", "armeabi-v7a" }/' $G
+sed -i '0,/defaultConfig {/s//defaultConfig {\n        ndk { abiFilters "arm64-v8a" }/' $G
 sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = 29/' android/variables.gradle
 sed -i 's/<application/<application android:extractNativeLibs="true"/' android/app/src/main/AndroidManifest.xml
 
