@@ -305,6 +305,7 @@ const $=s=>document.querySelector(s);
 const isApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
 const YT=()=>window.Capacitor.Plugins.YtDlp;
 if(isApp)document.documentElement.classList.add('app');
+if(isApp){try{YT().addListener('downloadDone',function(r){var m=$('#dlmsg');if(m)m.textContent=r.ok?('Saved to Downloads/Video Downloader: '+r.file):('Download failed: '+(r.error||'unknown error'))})}catch(e){}}
 const getId=u=>{const m=u.match(/(?:youtu\.be\/|v=|shorts\/|live\/|embed\/)([\w-]{11})/);return m?m[1]:null};
 const fallback=[['MP4 - 720p','mp4_720'],['MP4 - 480p','mp4_480'],['MP4 - 360p','mp4_360'],['MP3 - Audio only','mp3']];
 let curId='';
@@ -354,9 +355,9 @@ $('#dl').addEventListener('click',e=>{
     const a=$('#dl'),m=$('#dlmsg'),label=a.textContent;
     a.textContent='Preparing your file...';a.classList.add('wait');
     m.textContent='This can take a minute for long videos.';
-    YT().download({id:curId,format:$('#q').value})
-      .then(r=>{m.textContent='Saved to Downloads/Video Downloader: '+r.file})
-      .catch(er=>{m.textContent=(er&&er.message)||'Download failed. Please try again.'})
+    YT().download({id:curId,format:$('#q').value,title:$('#mt').textContent})
+      .then(()=>{m.textContent='Download started. You can leave the app. Progress is in your notifications.'})
+      .catch(er=>{m.textContent=(er&&er.message)||'Could not start the download.'})
       .finally(()=>{dlBusy=false;a.textContent=label;a.classList.remove('wait')});
     return;
   }

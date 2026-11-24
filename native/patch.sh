@@ -1,6 +1,6 @@
 set -e
 PKG=android/app/src/main/java/com/videoaudio/downloader
-cp native/YtDlpPlugin.java "$PKG/YtDlpPlugin.java"
+cp native/*.java "$PKG/"
 
 cat > "$PKG/MainActivity.java" << 'JAVA'
 package com.videoaudio.downloader;
@@ -37,3 +37,8 @@ if [ -n "$KS_PASS" ] && [ -f "$KS_FILE" ]; then
 else
   echo "signing: default debug key"
 fi
+
+M=android/app/src/main/AndroidManifest.xml
+sed -i 's#</application>#        <service android:name=".DownloadService" android:exported="false" android:foregroundServiceType="dataSync" />\n    </application>#' $M
+sed -i 's#</manifest>#    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.WAKE_LOCK" />\n</manifest>#' $M
+grep -n "DownloadService\|FOREGROUND_SERVICE\|POST_NOTIFICATIONS" $M
