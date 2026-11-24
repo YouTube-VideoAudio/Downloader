@@ -22,6 +22,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='230' fill='%23d6293e'/%3E%3Cg fill='%23fff' stroke='%23fff' stroke-linejoin='round' stroke-linecap='round'%3E%3Crect x='462' y='250' width='100' height='220' rx='30' stroke='none'/%3E%3Cpath d='M352 430H672L512 650Z' stroke-width='50'/%3E%3Cpath d='M340 750H684' stroke-width='64' fill='none'/%3E%3C/g%3E%3C/svg%3E">
 <script>
 if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())location.replace('app.html');
+(function(){var ua=navigator.userAgent||'';var and=/Android/i.test(ua);var tv=/(\bTV\b|AFT[A-Z]|SMART-?TV|BRAVIA|Tizen|Web0S|CrKey|GoogleTV)/i.test(ua);var m=ua.match(/Android\s+(\d+)/i);var v=m?parseInt(m[1],10):0;var d='';if(tv)d='tv';else if(!and)d='other';else if(v&&v<10)d='old';if(d)document.documentElement.setAttribute('data-dev',d);})();
 </script>
 <style>
 :root{--red:#d6293e;--tint:#ffe1e5;--dark:#2b2b2b;--mute:#666;--soft:#f4f4f4}
@@ -120,6 +121,17 @@ body.open{overflow:hidden}
 .dr a:first-child{background:var(--tint);color:var(--red);font-weight:700}
 .dr a:active{background:var(--soft)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+.nodev{display:none}
+[data-dev] .apkok,[data-dev] .hd{display:none}
+[data-dev] .nodev{display:block}
+.nodev .box2{background:#fff;border:2px solid #222;border-radius:24px;padding:18px;max-width:520px;margin:0 auto;text-align:left}
+.nodev .m{display:none;font-size:15px;color:#333}
+[data-dev=tv] .m-tv,[data-dev=other] .m-other,[data-dev=old] .m-old{display:block}
+[data-dev=old] .btns{display:none}
+.nodev .btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nodev button{border:0;background:var(--red);color:#fff;font-weight:700;border-radius:30px;padding:12px 20px;font-size:15px;cursor:pointer}
+.nodev button.o{background:#fff;color:#222;border:2px solid #222}
 </style><script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MobileApplication","name":"Video Downloader","operatingSystem":"Android 10 or newer","applicationCategory":"MultimediaApplication","description":"Download the free Video Downloader app for Android. Paste a link, choose MP4 or MP3 and save it to your phone. No signup, Android 10 or newer.","url":"https://videodownloader.devs.surf/","downloadUrl":"https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
@@ -166,9 +178,19 @@ body.open{overflow:hidden}
 </div>
 
 <div id="download">
+<div class="apkok">
 <a class="big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg><use href="#dl"/></svg>Download APK</a>
-<p class="note">Android 10 or newer &middot; Free</p>
+<p class="note">Android 10 or newer &middot; Free &middot; about 65 MB</p>
 <a class="rep" href="mailto:youtubevideodownloader@atomicmail.io?subject=Installation%20error">Report an installation error</a>
+</div>
+<div class="nodev">
+<div class="box2">
+<p class="m m-tv"><b>This app is for Android phones and tablets.</b> It does not work on TVs. Open this page on your phone to get it.</p>
+<p class="m m-other"><b>This app is for Android phones and tablets</b> (Android 10 or newer). It cannot be installed on a computer or iPhone. Open this page on your Android phone to download it.</p>
+<p class="m m-old"><b>Your Android version is too old.</b> The app needs Android 10 or newer.</p>
+<div class="btns"><button id="cp" type="button">Copy link</button><button id="sh" class="o" type="button">Share</button></div>
+</div>
+</div>
 </div>
 </div></div>
 
@@ -206,7 +228,7 @@ body.open{overflow:hidden}
 </div></section>
 
 <section class="s final" style="padding-top:0"><div class="c">
-<a class="big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg><use href="#dl"/></svg>Download APK</a>
+<div class="apkok"><a class="big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg><use href="#dl"/></svg>Download APK</a></div>
 </div></section>
 
 <footer><div class="c">
@@ -223,5 +245,10 @@ document.querySelector('.mb').onclick=()=>b.classList.add('open');
 document.querySelector('.ov').onclick=()=>b.classList.remove('open');
 document.querySelectorAll('.dr a').forEach(a=>a.addEventListener('click',()=>b.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')b.classList.remove('open')});
+
+var cp=document.getElementById('cp'),sh=document.getElementById('sh');
+var link=location.href.split('#')[0];
+if(cp)cp.onclick=function(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(function(){cp.textContent='Copied!'}).catch(function(){prompt('Copy this link',link)})}else{prompt('Copy this link',link)}};
+if(sh){if(navigator.share){sh.onclick=function(){navigator.share({title:'Video Downloader',url:link}).catch(function(){})}}else{sh.style.display='none'}}
 </script>
 </body></html>
