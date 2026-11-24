@@ -85,4 +85,65 @@ public class YtDlpPlugin extends Plugin {
             call.reject("Could not start the download.");
         }
     }
+
+    @PluginMethod
+    public void permStatus(PluginCall call) {
+        android.content.Context c = getContext();
+        boolean notif = androidx.core.app.NotificationManagerCompat.from(c).areNotificationsEnabled();
+        if (Build.VERSION.SDK_INT >= 33
+                && ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            notif = false;
+        }
+        boolean batt = true;
+        try {
+            android.os.PowerManager pm = (android.os.PowerManager) c.getSystemService(android.content.Context.POWER_SERVICE);
+            batt = pm.isIgnoringBatteryOptimizations(c.getPackageName());
+        } catch (Exception e) {}
+        JSObject o = new JSObject();
+        o.put("notifications", notif);
+        o.put("battery", batt);
+        call.resolve(o);
+    }
+
+    @PluginMethod
+    public void requestNotifications(PluginCall call) {
+        boolean settings = Boolean.TRUE.equals(call.getBoolean("settings", false));
+        android.content.Context c = getContext();
+        try {
+            if (!settings && Build.VERSION.SDK_INT >= 33
+                    && ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                    && getActivity() != null) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 7001);
+            } else {
+                Intent i = new Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                i.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, c.getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(i);
+            }
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("Could not open the permission screen.");
+        }
+    }
+
+    @PluginMethod
+    public void requestBattery(PluginCall call) {
+        android.content.Context c = getContext();
+        try {
+            Intent i = new Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    android.net.Uri.parse("package:" + c.getPackageName()));
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            call.resolve();
+        } catch (Exception e) {
+            try {
+                Intent i2 = new Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                i2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(i2);
+                call.resolve();
+            } catch (Exception e2) {
+                call.reject("Could not open the battery screen.");
+            }
+        }
+    }
 }

@@ -228,6 +228,14 @@ footer{margin-top:40px}
 .app .modal{padding-top:max(env(safe-area-inset-top,0px),34px)}
 .logo .lg{width:40px;height:40px;flex:none;border-radius:11px}
 .logo .lt b{white-space:nowrap}
+
+.prow{display:flex;align-items:center;gap:12px;border:2px solid #e8e8e8;border-radius:20px;padding:12px 14px;margin-bottom:10px}
+.prow div{flex:1;text-align:left}
+.prow b{display:block;font-size:15px}
+.prow span{display:block;font-size:13px;color:#666}
+.prow button{flex:none;border:0;border-radius:30px;padding:10px 16px;font-weight:700;background:#d6293e;color:#fff;cursor:pointer}
+.prow button.ok{background:#e6f4ea;color:#1b7a3a}
+#pli{display:none}.app #pli{display:block}
 </style></head><body>
 
 <div class="hero">
@@ -295,11 +303,21 @@ footer{margin-top:40px}
 <footer><div class="c">
 <div class="row">
 <a class="logo" href="#"><svg class="lg" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="#d6293e"/><g fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-linecap="round"><rect x="462" y="250" width="100" height="220" rx="30" stroke="none"/><path d="M352 430H672L512 650Z" stroke-width="50"/><path d="M340 750H684" stroke-width="64" fill="none"/></g></svg><div class="lt"><b>Video Downloader</b></div></a>
-<ul><li><a href="terms.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5z"/></svg>Terms</a></li><li><a href="privacy.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3z"/></svg>Privacy</a></li><li><a href="dmca.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v20H5zM9 3h11l-3 5 3 5H9z"/></svg>DMCA</a></li><li><a href="contact.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.5 2L12 13l7.5-6z"/></svg>Contact</a></li></ul>
+<ul><li><a href="terms.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5z"/></svg>Terms</a></li><li><a href="privacy.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 8V7a3 3 0 0 1 6 0v3z"/></svg>Privacy</a></li><li><a href="dmca.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h2v20H5zM9 3h11l-3 5 3 5H9z"/></svg>DMCA</a></li><li><a href="contact.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.5 2L12 13l7.5-6z"/></svg>Contact</a></li><li id="pli"><a href="#" id="plink">Permissions</a></li></ul>
 </div>
 <small>&copy; 2026 Downloader. Not affiliated with or endorsed by YouTube or Google. All videos and thumbnails are the property of their respective owners. Please respect copyright.</small>
 </div></footer>
 
+<div class="modal" id="perm" aria-hidden="true">
+<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pt">
+<button class="x" id="pclose" type="button" aria-label="Close">&times;</button>
+<h3 id="pt" style="margin:6px 44px 6px 4px;font-size:20px">Allow these for smooth downloads</h3>
+<p class="note" style="text-align:left;margin:0 4px 14px">Downloads can keep running when you leave the app.</p>
+<div class="prow"><div><b>Notifications</b><span>Shows progress and tells you when a download is done.</span></div><button id="pn" type="button">Allow</button></div>
+<div class="prow"><div><b>Run in background</b><span>Keeps downloads going when you leave the app or lock the screen.</span></div><button id="pb" type="button">Allow</button></div>
+<p class="note" style="text-align:left;margin:10px 4px 0">No storage permission is needed. Files are saved to Downloads/Video Downloader.</p>
+<a class="btn dl" id="pdone" href="#">Done</a>
+</div></div>
 <script>
 const $=s=>document.querySelector(s);
 const isApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
@@ -382,5 +400,31 @@ $('#dl').addEventListener('click',e=>{
   f.src=a.getAttribute('href')+'&t='+tk;
   document.body.appendChild(f);
 });
+
+var permAsked=false;
+async function permStatus(){try{return await YT().permStatus()}catch(e){return {notifications:true,battery:true}}}
+async function renderPerm(){
+  var s=await permStatus();
+  var pn=$('#pn'),pb=$('#pb');
+  pn.textContent=s.notifications?'Allowed':'Allow';pn.classList.toggle('ok',!!s.notifications);pn.disabled=!!s.notifications;
+  pb.textContent=s.battery?'Allowed':'Allow';pb.classList.toggle('ok',!!s.battery);pb.disabled=!!s.battery;
+  return s;
+}
+function openPerm(){$('#perm').classList.add('open');$('#perm').setAttribute('aria-hidden','false');document.body.classList.add('lock');renderPerm()}
+function closePerm(){$('#perm').classList.remove('open');$('#perm').setAttribute('aria-hidden','true');document.body.classList.remove('lock');try{localStorage.setItem('perm_seen','1')}catch(e){}}
+if(isApp){
+  $('#pn').onclick=async function(){try{await YT().requestNotifications({settings:permAsked})}catch(e){}permAsked=true;setTimeout(renderPerm,1200)};
+  $('#pb').onclick=async function(){try{await YT().requestBattery()}catch(e){}};
+  $('#pclose').onclick=closePerm;
+  $('#pdone').onclick=function(e){e.preventDefault();closePerm()};
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&$('#perm').classList.contains('open'))renderPerm()});
+  var pl=document.getElementById('plink');if(pl)pl.onclick=function(e){e.preventDefault();openPerm()};
+  setTimeout(async function(){
+    var seen=false;try{seen=localStorage.getItem('perm_seen')==='1'}catch(e){}
+    if(seen)return;
+    var s=await permStatus();
+    if(!s.notifications||!s.battery)openPerm();
+  },1500);
+}
 </script>
 </body></html>
