@@ -146,4 +146,81 @@ public class YtDlpPlugin extends Plugin {
             }
         }
     }
+
+    @PluginMethod
+    public void listDownloads(final PluginCall call) {
+        if (android.os.Build.VERSION.SDK_INT < 29) { call.reject("Android 10 or newer is required."); return; }
+        new Thread(() -> {
+            try {
+                android.content.ContentResolver r = getContext().getContentResolver();
+                String[] proj = {
+                    android.provider.MediaStore.MediaColumns._ID,
+                    android.provider.MediaStore.MediaColumns.DISPLAY_NAME,
+                    android.provider.MediaStore.MediaColumns.SIZE,
+                    android.provider.MediaStore.MediaColumns.MIME_TYPE,
+                    android.provider.MediaStore.MediaColumns.DATE_ADDED
+                };
+                String sel = android.provider.MediaStore.MediaColumns.RELATIVE_PATH + " LIKE ?";
+                String[] args = { android.os.Environment.DIRECTORY_DOWNLOADS + "/Video Downloader%" };
+                JSArray arr = new JSArray();
+                try (android.database.Cursor c = r.query(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, proj, sel, args,
+                        android.provider.MediaStore.MediaColumns.DATE_ADDED + " DESC")) {
+                    if (c != null) {
+                        while (c.moveToNext()) {
+                            long id = c.getLong(0);
+                            String mime = c.getString(3);
+                            JSObject o = new JSObject();
+                            o.put("uri", android.content.ContentUris.withAppendedId(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, id).toString());
+                            o.put("name", c.getString(1));
+                            o.put("size", c.getLong(2));
+                            o.put("mime", mime);
+                            o.put("audio", mime != null && mime.startsWith("audio"));
+                            o.put("date", c.getLong(4) * 1000L);
+                            arr.put(o);
+                        }
+                    }
+                }
+                JSObject out = new JSObject();
+                out.put("files", arr);
+                call.resolve(out);
+            } catch (Exception e) {
+                call.reject("Could not list downloads.");
+            }
+        }).start();
+    }
+
+    @PluginMethod
+    public void play(PluginCall call) {
+        String uri = call.getString("uri");
+        String title = call.getString("title", "Video");
+        String base = android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString();
+        if (uri == null || !uri.startsWith(base)) { call.reject("Invalid file"); return; }
+        try {
+            android.content.Intent i = new android.content.Intent(getContext(), PlayerActivity.class);
+            i.putExtra("uri", uri);
+            i.putExtra("title", title);
+            if (getActivity() != null) {
+                getActivity().startActivity(i);
+            } else {
+                i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+            }
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("Could not open the player.");
+        }
+    }
+
+    @PluginMethod
+    public void deleteDownload(PluginCall call) {
+        String uri = call.getString("uri");
+        String base = android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString();
+        if (uri == null || !uri.startsWith(base)) { call.reject("Invalid file"); return; }
+        try {
+            int n = getContext().getContentResolver().delete(android.net.Uri.parse(uri), null, null);
+            if (n > 0) call.resolve(); else call.reject("Could not delete this file.");
+        } catch (Exception e) {
+            call.reject("Could not delete this file.");
+        }
+    }
 }

@@ -45,3 +45,6 @@ grep -n "DownloadService\|FOREGROUND_SERVICE\|POST_NOTIFICATIONS" $M
 
 sed -i 's#</manifest>#    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />\n</manifest>#' android/app/src/main/AndroidManifest.xml
 grep -n "REQUEST_IGNORE" android/app/src/main/AndroidManifest.xml
+
+sed -i 's#</application>#        <activity android:name=".PlayerActivity" android:exported="false" android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />\n    </application>#' android/app/src/main/AndroidManifest.xml
+grep -n "PlayerActivity" android/app/src/main/AndroidManifest.xml
