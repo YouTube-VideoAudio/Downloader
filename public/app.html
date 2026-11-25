@@ -340,6 +340,8 @@ window.addEventListener('hashchange',route);
 /* ---------- get video ---------- */
 function getId(u){var m=u.match(/(?:youtu\.be\/|[?&]v=|shorts\/|live\/|embed\/)([\w-]{11})/);return m?m[1]:null}
 function keyOf(s){var h1=0x811c9dc5,h2=0x9e3779b1;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h1^=c;h1=Math.imul(h1,16777619)>>>0;h2^=c+i;h2=Math.imul(h2,2246822519)>>>0}return 'x'+('00000000'+h1.toString(16)).slice(-8)+('00000000'+h2.toString(16)).slice(-2)}
+var ADULT=['pornhub.com','xvideos.com','xnxx.com','xhamster.com','redtube.com','youporn.com','spankbang.com','eporner.com','tube8.com','porn.com','beeg.com','thumbzilla.com'];
+function isAdult(u){try{var h=new URL(u).hostname.toLowerCase();return ADULT.some(function(d){return h===d||h.endsWith('.'+d)})}catch(e){return false}}
 function parseLink(t){
   t=(t||'').trim();
   var m=t.match(/https?:\/\/[^\s]+/i);
@@ -354,6 +356,10 @@ async function getVideo(){
   var em=$('#err');em.classList.remove('on');
   var pl=parseLink($('#url').value);
   if(!pl){em.textContent='Please paste a valid video link.';em.classList.add('on');return}
+  if(!pl.yt&&isAdult(pl.url)&&!lsGet('adult_ok',false)){
+    if(!window.confirm('This website has adult content. Continue only if you are 18 or older and it is legal where you live. Download only content you have permission to use.'))return;
+    lsSet('adult_ok',true);
+  }
   var b=$('#get');b.disabled=true;b.textContent='Fetching...';
   try{
     var r=await YT().info({id:pl.id,url:pl.url});
