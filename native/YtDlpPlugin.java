@@ -273,4 +273,12 @@ public class YtDlpPlugin extends Plugin {
             }
         }).start();
     }
+
+    @PluginMethod
+    public void getShared(PluginCall call) {
+        String t = ShareStore.take();
+        JSObject o = new JSObject();
+        o.put("text", t == null ? "" : t);
+        call.resolve(o);
+    }
 }

@@ -5,6 +5,7 @@ cp native/*.java "$PKG/"
 cat > "$PKG/MainActivity.java" << 'JAVA'
 package com.videoaudio.downloader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
 
@@ -13,6 +14,26 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(YtDlpPlugin.class);
         super.onCreate(savedInstanceState);
+        handleShare(getIntent(), false);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleShare(intent, true);
+    }
+
+    private void handleShare(Intent intent, boolean live) {
+        if (intent == null || !Intent.ACTION_SEND.equals(intent.getAction())) return;
+        String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+        intent.setAction(Intent.ACTION_MAIN);
+        if (text == null || text.trim().isEmpty()) return;
+        if (text.length() > 4000) text = text.substring(0, 4000);
+        ShareStore.pending = text;
+        if (live && getBridge() != null) {
+            getBridge().triggerWindowJSEvent("sharedtext", "{}");
+        }
     }
 }
 JAVA
@@ -48,3 +69,18 @@ grep -n "REQUEST_IGNORE" android/app/src/main/AndroidManifest.xml
 
 sed -i 's#</application>#        <activity android:name=".PlayerActivity" android:exported="false" android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />\n    </application>#' android/app/src/main/AndroidManifest.xml
 grep -n "PlayerActivity" android/app/src/main/AndroidManifest.xml
+
+python3 - << 'PY'
+p = 'android/app/src/main/AndroidManifest.xml'
+s = open(p).read()
+filt = """            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>"""
+if 'android.intent.action.SEND' not in s:
+    s = s.replace('</activity>', filt, 1)
+open(p, 'w').write(s)
+PY
+grep -n "action.SEND" android/app/src/main/AndroidManifest.xml

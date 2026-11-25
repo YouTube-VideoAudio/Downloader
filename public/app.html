@@ -586,9 +586,31 @@ async function doSearch(){
 $('#sgo').onclick=doSearch;
 $('#sq').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSearch()}});
 
+/* ---------- shared from other apps ---------- */
+var shBusy=false;
+async function checkShared(){
+  if(shBusy)return;
+  shBusy=true;
+  try{
+    var r=await YT().getShared();
+    var t=r&&r.text;
+    if(!t)return;
+    var m=t.match(/https?:\/\/[^\s]+/i);
+    if(!m||!parseLink(t)){toast('No video link found in the shared text.',4500);return}
+    var u=m[0].replace(/[)\].,;]+$/,'');
+    $('#url').value=u;
+    if(hash()!=='home'&&!(hash()===''&&page==='home'))location.hash='home';
+    setTimeout(getVideo,200);
+  }catch(e){}
+  finally{shBusy=false}
+}
+window.addEventListener('sharedtext',checkShared);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkShared()});
+
 /* ---------- start ---------- */
 setPage('home');
 route();
+checkShared();
 setTimeout(async function(){
   if(lsGet('perm_seen',false))return;
   var s=await permStatus();
