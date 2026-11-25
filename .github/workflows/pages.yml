@@ -21,6 +21,12 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
       - run: rsvg-convert -w 1200 -h 630 native/og.svg -o public/og.png
+      - run: |
+          rsvg-convert -w 48 -h 48 native/favicon.svg -o public/favicon-48.png
+          rsvg-convert -w 192 -h 192 native/favicon.svg -o public/icon-192.png
+          rsvg-convert -w 180 -h 180 native/favicon.svg -o public/apple-touch-icon.png
+          cp native/favicon.svg public/favicon.svg
+          python3 native/make_ico.py public/favicon-48.png public/favicon.ico
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
