@@ -71,15 +71,18 @@ final class YtHelper {
         return r + " [" + updNote + "]";
     }
 
-    static String download(Context ctx, String id, String format) throws Exception {
+    static String download(Context ctx, String id, String url, String format) throws Exception {
         if (Build.VERSION.SDK_INT < 29) throw new Exception("Android 10 or newer is required.");
         ensureInit(ctx);
         final File dir = new File(ctx.getCacheDir(), "dl");
         dir.mkdirs();
         final String prefix = "v" + System.currentTimeMillis() + ".";
         try {
-            YoutubeDLRequest req = new YoutubeDLRequest("https://www.youtube.com/watch?v=" + id);
+            String target = target(id, url);
+            if (target == null) throw new Exception("Invalid link");
+            YoutubeDLRequest req = new YoutubeDLRequest(target);
             req.addOption("--no-playlist");
+            req.addOption("--playlist-items", "1");
             req.addOption("--force-ipv4");
             req.addOption("--retries", "3");
             req.addOption("--fragment-retries", "3");
@@ -91,7 +94,7 @@ final class YtHelper {
                 req.addOption("--audio-quality", "0");
             } else {
                 String h = format.substring(4);
-                req.addOption("-f", "bv*[height<=" + h + "][vcodec^=avc1]+ba[ext=m4a]/bv*[height<=" + h + "]+ba/b[height<=" + h + "]");
+                req.addOption("-f", "bv*[height<=" + h + "][vcodec^=avc1]+ba[ext=m4a]/bv*[height<=" + h + "]+ba/b[height<=" + h + "]/b");
                 req.addOption("--merge-output-format", "mp4");
             }
             YoutubeDL.getInstance().execute(req, "dl-" + prefix, false, null);
@@ -104,7 +107,7 @@ final class YtHelper {
 
             ContentValues v = new ContentValues();
             v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
-            v.put(MediaStore.MediaColumns.MIME_TYPE, ext.equals("mp3") ? "audio/mpeg" : "video/mp4");
+            v.put(MediaStore.MediaColumns.MIME_TYPE, mimeFor(ext));
             v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Video Downloader");
             ContentResolver r = ctx.getContentResolver();
             Uri u = r.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
@@ -133,5 +136,47 @@ final class YtHelper {
         com.yausername.youtubedl_android.YoutubeDLResponse resp =
                 YoutubeDL.getInstance().execute(req, "s-" + System.currentTimeMillis(), false, null);
         return resp.getOut();
+    }
+
+    private static final String[] BLOCKED = {
+        "pornhub.com","xvideos.com","xnxx.com","xhamster.com","redtube.com","youporn.com","spankbang.com",
+        "eporner.com","tube8.com","porn.com","beeg.com","thumbzilla.com","chaturbate.com","stripchat.com",
+        "onlyfans.com","fansly.com",
+        "netflix.com","primevideo.com","disneyplus.com","hulu.com","max.com","hbomax.com","peacocktv.com",
+        "paramountplus.com","crunchyroll.com","hotstar.com","jiocinema.com","sonyliv.com","zee5.com",
+        "spotify.com","music.apple.com","tv.apple.com","tidal.com","deezer.com"
+    };
+
+    static boolean isBlocked(String url) {
+        if (url == null || url.trim().isEmpty()) return false;
+        String host;
+        try { host = new java.net.URL(url.trim()).getHost(); } catch (Exception e) { return false; }
+        if (host == null) return false;
+        host = host.toLowerCase(java.util.Locale.ROOT);
+        for (String d : BLOCKED) {
+            if (host.equals(d) || host.endsWith("." + d)) return true;
+        }
+        return false;
+    }
+
+    static String target(String id, String url) {
+        if (url != null && !url.trim().isEmpty()) {
+            String u = url.trim();
+            if (u.length() > 2000 || !u.matches("(?i)^https?://\\S+$")) return null;
+            return u;
+        }
+        return validId(id) ? "https://www.youtube.com/watch?v=" + id : null;
+    }
+
+    static String mimeFor(String ext) {
+        String e = ext == null ? "" : ext.toLowerCase(java.util.Locale.ROOT);
+        switch (e) {
+            case "mp3": return "audio/mpeg";
+            case "m4a": return "audio/mp4";
+            case "opus": case "ogg": return "audio/ogg";
+            case "webm": return "video/webm";
+            case "mkv": return "video/x-matroska";
+            default: return "video/mp4";
+        }
     }
 }

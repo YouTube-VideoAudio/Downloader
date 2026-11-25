@@ -35,6 +35,7 @@ public class DownloadService extends Service {
         createChannels();
         final String id = intent != null ? intent.getStringExtra("id") : null;
         final String format = intent != null ? intent.getStringExtra("format") : null;
+        final String url = intent != null ? intent.getStringExtra("url") : null;
         synchronized (this) { pending++; }
         startForeground(ONGOING_ID, ongoing(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
         if (wake == null) {
@@ -42,7 +43,7 @@ public class DownloadService extends Service {
             wake = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "videodownloader:dl");
             wake.acquire(60L * 60L * 1000L);
         }
-        if (!YtHelper.validId(id) || format == null) {
+        if (!YtHelper.validId(id) || format == null || YtHelper.isBlocked(url)) {
             finishOne(null, "Invalid request");
             return START_NOT_STICKY;
         }
@@ -50,7 +51,7 @@ public class DownloadService extends Service {
             String file = null;
             String err = null;
             try {
-                file = YtHelper.download(getApplicationContext(), id, format);
+                file = YtHelper.download(getApplicationContext(), id, url, format);
             } catch (Exception e) {
                 err = YtHelper.shortErr(e);
                 android.util.Log.e("YtDlp", "download failed", e);

@@ -29,12 +29,19 @@ public class YtDlpPlugin extends Plugin {
     public void info(final PluginCall call) {
         final String id = call.getString("id");
         if (!YtHelper.validId(id)) { call.reject("Invalid link"); return; }
+        final String url = call.getString("url", "");
+        if (YtHelper.isBlocked(url)) { call.reject("This site is not supported."); return; }
+        final String target = YtHelper.target(id, url);
+        if (target == null) { call.reject("Invalid link"); return; }
         new Thread(() -> {
             try {
                 YtHelper.ensureInit(getContext());
-                VideoInfo vi = YoutubeDL.getInstance().getInfo("https://www.youtube.com/watch?v=" + id);
+                VideoInfo vi = YoutubeDL.getInstance().getInfo(target);
                 JSObject out = new JSObject();
                 out.put("title", vi.getTitle());
+                String thumb = "";
+                try { Object t = vi.getClass().getMethod("getThumbnail").invoke(vi); if (t != null) thumb = t.toString(); } catch (Throwable ignored) {}
+                out.put("thumb", thumb);
                 JSArray formats = new JSArray();
                 int[] hs = {1080, 720, 480, 360};
                 for (int h : hs) formats.put(fmt("MP4 - " + h + "p", "mp4_" + h));
@@ -52,6 +59,8 @@ public class YtDlpPlugin extends Plugin {
         final String id = call.getString("id");
         final String format = call.getString("format");
         final String title = call.getString("title");
+        final String url = call.getString("url", "");
+        if (YtHelper.isBlocked(url) || (!url.isEmpty() && YtHelper.target(id, url) == null)) { call.reject("This site is not supported."); return; }
         if (!YtHelper.validId(id) || format == null || !format.matches("mp4_(1080|720|480|360)|mp3")) {
             call.reject("Invalid request");
             return;
@@ -77,6 +86,7 @@ public class YtDlpPlugin extends Plugin {
             i.putExtra("id", id);
             i.putExtra("format", format);
             i.putExtra("title", title);
+            i.putExtra("url", url);
             ContextCompat.startForegroundService(getContext(), i);
             JSObject r = new JSObject();
             r.put("started", true);
