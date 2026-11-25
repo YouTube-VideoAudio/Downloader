@@ -135,6 +135,19 @@ html.web #app,html.web .tabs,html.web .selbar,html.web #sb,html.web .ov,html.web
 html.web body{padding:0}
 #na .page{display:block}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.rc{border:2px solid var(--line);border-radius:22px;overflow:hidden;margin-bottom:14px;background:#fff}
+.rc .tb{position:relative;aspect-ratio:16/9;background:var(--soft);cursor:pointer}
+.rc .tb img{width:100%;height:100%;object-fit:cover;display:block}
+.rc .du{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;padding:2px 8px;border-radius:8px}
+.rc .bd{display:flex;align-items:center;gap:10px;padding:12px}
+.rc .tx{flex:1;min-width:0;text-align:left}
+.rc .tx b{font-size:14.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.rc .tx span{display:block;font-size:12.5px;color:var(--mute);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rc .pill{flex:none;padding:10px 14px;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.rc .pill svg{width:18px;height:18px}
+.tab{font-size:11.5px}
+.tab .pi{width:48px}
 </style></head><body>
 
 <div id="sb"></div>
@@ -155,6 +168,7 @@ html.web body{padding:0}
 <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 2h2v20H5zM9 3h11l-3 5 3 5H9z"/></symbol>
 <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.5 2L12 13l7.5-6z"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6-1.4-1.4L12.2 12 7.6 7.4z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></symbol>
 </defs></svg>
 
 <div id="na">
@@ -180,6 +194,17 @@ html.web body{padding:0}
 <div class="lerr" id="lerr"><div id="lerrT"></div><button id="lerrX" type="button">Dismiss</button></div>
 <div class="sec"><h2>Recent downloads</h2><button class="link" id="seeall" type="button">See all</button></div>
 <div id="recent"></div>
+</section>
+
+<section class="page" id="p-search">
+<div class="bar"><b>Search</b></div>
+<div class="field">
+<svg class="i" style="color:#777" aria-hidden="true"><use href="#i-search"/></svg>
+<input id="sq" type="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search videos" placeholder="Search videos or paste a link">
+<button class="pill" id="sgo" type="button">Search</button>
+</div>
+<p class="meta" id="sst" style="margin-top:12px">Search any video, then tap Download.</p>
+<div id="sres"></div>
 </section>
 
 <section class="page" id="p-downloads">
@@ -223,6 +248,7 @@ html.web body{padding:0}
 
 <nav class="tabs" aria-label="Main">
 <button class="tab on" data-p="home" type="button"><span class="pi"><svg class="i"><use href="#i-home"/></svg></span>Home</button>
+<button class="tab" data-p="search" type="button"><span class="pi"><svg class="i"><use href="#i-search"/></svg></span>Search</button>
 <button class="tab" data-p="downloads" type="button"><span class="pi"><svg class="i"><use href="#i-dl"/></svg></span>Downloads</button>
 <button class="tab" data-p="more" type="button"><span class="pi"><svg class="i"><use href="#i-more"/></svg></span>More</button>
 </nav>
@@ -278,7 +304,7 @@ function fileId(n){var m=/^video-([\w-]{11})\./.exec(n||'');return m?m[1]:null}
 function niceName(f){var id=fileId(f.name);return (id&&titles[id])||f.name}
 
 /* ---------- state ---------- */
-var PAGES=['home','downloads','more'];
+var PAGES=['home','search','downloads','more'];
 var page='home',cur=null,selFmt='mp4_720';
 var files=[],filter='all',sortBy='new',selecting=false,sel={};
 var active=[],lastErr=null,asked=false;
@@ -492,6 +518,55 @@ document.addEventListener('visibilitychange',function(){
   if(page==='downloads'||page==='home')refresh();
   if(page==='more'||hash()==='perm')renderPerm();
 });
+
+
+/* ---------- search ---------- */
+var sBusy=false;
+function fmtDur(s){s=Math.round(s||0);if(!s)return'';var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+(m<10?'0':''):'')+m+':'+(x<10?'0':'')+x}
+function fmtViews(n){if(!n)return'';if(n>=1e9)return (n/1e9).toFixed(1)+'B views';if(n>=1e6)return (n/1e6).toFixed(1)+'M views';if(n>=1e3)return (n/1e3).toFixed(1)+'K views';return n+' views'}
+function resCard(r){
+  var c=el('div','rc');
+  var tb=el('div','tb');
+  var im=el('img');im.alt='';im.loading='lazy';im.src='https://i.ytimg.com/vi/'+r.id+'/mqdefault.jpg';im.onerror=function(){im.remove()};
+  tb.appendChild(im);
+  var d=fmtDur(r.duration);if(d)tb.appendChild(el('span','du',d));
+  var bd=el('div','bd');
+  var tx=el('div','tx');tx.appendChild(el('b','',r.title||'Untitled'));
+  var sub=[r.channel,fmtViews(r.views)].filter(Boolean).join(' \u00b7 ');
+  if(sub)tx.appendChild(el('span','',sub));
+  var b=el('button','pill');b.type='button';b.appendChild(svg('i-dl'));b.appendChild(document.createTextNode('Download'));
+  function go(){cur={id:r.id,title:r.title||'Your video',formats:FALLBACK};openGet()}
+  b.onclick=go;tb.onclick=go;
+  bd.appendChild(tx);bd.appendChild(b);
+  c.appendChild(tb);c.appendChild(bd);
+  return c;
+}
+async function doSearch(){
+  var q=$('#sq').value.trim();
+  var box=$('#sres'),st=$('#sst');
+  if(!q)return;
+  if(getId(q)){
+    $('#url').value=q;
+    await getVideo();
+    var em=$('#err');
+    if(em.classList.contains('on'))toast(em.textContent,4500);
+    return;
+  }
+  if(sBusy)return;
+  sBusy=true;$('#sgo').disabled=true;
+  st.textContent='Searching...';box.textContent='';
+  try{
+    var r=await YT().search({query:q});
+    var list=(r&&r.results)||[];
+    if(!list.length){st.textContent='No results. Try different words.'}
+    else{st.textContent=list.length+' results';list.forEach(function(x){box.appendChild(resCard(x))})}
+  }catch(e){
+    st.textContent=(e&&e.message)||'Search failed. Check your connection and try again.';
+  }
+  sBusy=false;$('#sgo').disabled=false;
+}
+$('#sgo').onclick=doSearch;
+$('#sq').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doSearch()}});
 
 /* ---------- start ---------- */
 setPage('home');

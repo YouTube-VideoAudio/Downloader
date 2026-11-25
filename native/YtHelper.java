@@ -120,4 +120,18 @@ final class YtHelper {
             if (left != null) for (File x : left) x.delete();
         }
     }
+
+    static String search(Context ctx, String query, int n) throws Exception {
+        ensureInit(ctx);
+        YoutubeDLRequest req = new YoutubeDLRequest("ytsearch" + n + ":" + query);
+        req.addOption("--flat-playlist");
+        req.addOption("--dump-single-json");
+        req.addOption("--no-warnings");
+        req.addOption("--force-ipv4");
+        req.addOption("--retries", "2");
+        req.addOption("--socket-timeout", "20");
+        com.yausername.youtubedl_android.YoutubeDLResponse resp =
+                YoutubeDL.getInstance().execute(req, "s-" + System.currentTimeMillis(), false, null);
+        return resp.getOut();
+    }
 }

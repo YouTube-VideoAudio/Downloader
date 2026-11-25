@@ -223,4 +223,44 @@ public class YtDlpPlugin extends Plugin {
             call.reject("Could not delete this file.");
         }
     }
+
+    @PluginMethod
+    public void search(final PluginCall call) {
+        final String query = call.getString("query");
+        if (query == null || query.trim().isEmpty() || query.length() > 120) {
+            call.reject("Type something to search.");
+            return;
+        }
+        new Thread(() -> {
+            try {
+                String raw = YtHelper.search(getContext(), query.trim(), 15);
+                org.json.JSONObject root = new org.json.JSONObject(raw);
+                org.json.JSONArray entries = root.optJSONArray("entries");
+                JSArray arr = new JSArray();
+                if (entries != null) {
+                    for (int i = 0; i < entries.length(); i++) {
+                        org.json.JSONObject e = entries.optJSONObject(i);
+                        if (e == null) continue;
+                        String id = e.isNull("id") ? "" : e.optString("id", "");
+                        if (!YtHelper.validId(id)) continue;
+                        String ch = e.isNull("channel") ? "" : e.optString("channel", "");
+                        if (ch.isEmpty()) ch = e.isNull("uploader") ? "" : e.optString("uploader", "");
+                        JSObject o = new JSObject();
+                        o.put("id", id);
+                        o.put("title", e.isNull("title") ? "" : e.optString("title", ""));
+                        o.put("channel", ch);
+                        o.put("duration", e.optDouble("duration", 0));
+                        o.put("views", e.optLong("view_count", 0));
+                        arr.put(o);
+                    }
+                }
+                JSObject out = new JSObject();
+                out.put("results", arr);
+                call.resolve(out);
+            } catch (Exception ex) {
+                android.util.Log.e("YtDlp", "search failed", ex);
+                call.reject("Search failed. " + YtHelper.shortErr(ex));
+            }
+        }).start();
+    }
 }
