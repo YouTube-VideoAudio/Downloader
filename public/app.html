@@ -148,6 +148,17 @@ html.web body{padding:0}
 .rc .pill svg{width:18px;height:18px}
 .tab{font-size:11.5px}
 .tab .pi{width:48px}
+
+.tab .pi{position:relative}
+.tab .dot{display:none;position:absolute;top:1px;right:6px;width:11px;height:11px;border-radius:50%;background:var(--red);border:2px solid #fff}
+body.has-up .tab[data-p=more] .dot{display:block}
+.newdot{display:none;position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid #fff}
+.pbar{display:none;height:8px;border-radius:6px;background:#eee;margin-top:8px;overflow:hidden}
+.pbar.on{display:block}
+.pbar i{display:block;height:100%;width:0;background:var(--red);transition:width .2s}
+.item button.upb{flex:none;border-radius:30px;padding:9px 16px;font-weight:700;background:var(--red);color:#fff;font-size:14px}
+.item button.upb.ghost{background:#f1f1f1;color:#222}
+.item button.upb:disabled{opacity:.6}
 </style></head><body>
 
 <div id="sb"></div>
@@ -223,6 +234,10 @@ html.web body{padding:0}
 
 <section class="page" id="p-more">
 <div class="bar"><b>More</b></div>
+<div class="h3s">App update</div>
+<div class="grp">
+<div class="item"><div class="ic2" style="position:relative"><svg class="i"><use href="#i-dl"/></svg><i class="newdot" id="upDot"></i></div><div class="tx"><b id="upT">Check for updates</b><span id="upS">&nbsp;</span><div class="pbar" id="upBar"><i id="upFill"></i></div></div><button class="upb ghost" id="upBtn" type="button">Check</button></div>
+</div>
 <div class="h3s">Permissions</div>
 <div class="grp">
 <div class="item"><div class="ic2"><svg class="i"><use href="#i-bell"/></svg></div><div class="tx"><b>Notifications</b><span>Progress and finished downloads</span></div><button class="pn" type="button">Allow</button></div>
@@ -250,7 +265,7 @@ html.web body{padding:0}
 <button class="tab on" data-p="home" type="button"><span class="pi"><svg class="i"><use href="#i-home"/></svg></span>Home</button>
 <button class="tab" data-p="search" type="button"><span class="pi"><svg class="i"><use href="#i-search"/></svg></span>Search</button>
 <button class="tab" data-p="downloads" type="button"><span class="pi"><svg class="i"><use href="#i-dl"/></svg></span>Downloads</button>
-<button class="tab" data-p="more" type="button"><span class="pi"><svg class="i"><use href="#i-more"/></svg></span>More</button>
+<button class="tab" data-p="more" type="button"><span class="pi"><svg class="i"><use href="#i-more"/></svg><i class="dot"></i></span>More</button>
 </nav>
 
 <div class="ov" id="ov"></div>
@@ -319,7 +334,7 @@ function setPage(p){
   $$('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===p)});
   window.scrollTo(0,0);
   if(p==='downloads'||p==='home')refresh();
-  if(p==='more')renderPerm();
+  if(p==='more'){renderPerm();renderUp()}
 }
 function route(){
   var h=hash();
@@ -607,9 +622,82 @@ async function checkShared(){
 window.addEventListener('sharedtext',checkShared);
 document.addEventListener('visibilitychange',function(){if(!document.hidden)checkShared()});
 
+/* ---------- app update ---------- */
+var UP_API='https://api.github.com/repos/YouTube-VideoAudio/Downloader/releases/tags/latest';
+var UP_APK='https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk';
+var myVer={versionCode:0,versionName:''},upInfo=null,upState='',upPct=0,upBusy=false;
+function hasUpdate(){return !!(upInfo&&myVer.versionCode&&upInfo.code>myVer.versionCode)}
+function renderUp(){
+  var t=$('#upT'),s=$('#upS'),b=$('#upBtn'),bar=$('#upBar'),has=hasUpdate();
+  document.body.classList.toggle('has-up',has);
+  $('#upDot').style.display=has?'block':'none';
+  if(upState==='downloading'){
+    t.textContent='Downloading update...';s.textContent=upPct+'%';
+    b.textContent='Please wait';b.className='upb';b.disabled=true;
+    bar.classList.add('on');$('#upFill').style.width=upPct+'%';return;
+  }
+  bar.classList.remove('on');b.disabled=false;
+  if(!myVer.versionCode){
+    t.textContent='Update';s.textContent='Get the latest app once to enable updates inside the app.';
+    b.textContent='Get latest';b.className='upb';return;
+  }
+  if(has){
+    t.textContent='New version available';
+    s.textContent='Version 1.'+upInfo.code+(upInfo.size?' \u00b7 '+fmtSize(upInfo.size):'');
+    b.textContent='Update Now';b.className='upb';
+  }else{
+    t.textContent='App is up to date';
+    s.textContent='Version '+(myVer.versionName||'?');
+    b.textContent='Check';b.className='upb ghost';
+  }
+}
+async function checkUpdate(manual){
+  if(!myVer.versionCode){if(manual)toast('Get the latest app first to use updates.');return}
+  if(upBusy||upState)return;
+  if(!manual&&Date.now()-lsGet('up_check',0)<3*3600*1000)return;
+  var b=$('#upBtn');
+  if(manual){b.disabled=true;b.textContent='Checking...'}
+  try{
+    var r=await fetch(UP_API,{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
+    if(!r.ok)throw new Error('http');
+    var j=await r.json();
+    var m=/versionCode:\s*(\d+)/.exec(j.body||'');
+    var a=(j.assets||[]).filter(function(x){return /\.apk$/i.test(x.name)})[0];
+    if(!m||!a)throw new Error('no info');
+    upInfo={code:parseInt(m[1],10),url:a.browser_download_url,size:a.size||0};
+    lsSet('up_info',upInfo);lsSet('up_check',Date.now());
+    if(manual&&!hasUpdate())toast('You have the latest version.');
+  }catch(e){if(manual)toast('Could not check for updates. Check your connection.',4000)}
+  renderUp();
+}
+async function doUpdate(){
+  if(upBusy||!hasUpdate())return;
+  upBusy=true;upState='downloading';upPct=0;renderUp();
+  try{
+    await YT().downloadUpdate({url:upInfo.url,size:upInfo.size||0});
+    upState='';renderUp();
+    var r=await YT().installUpdate();
+    if(r&&r.needsPermission)toast('Allow "Install unknown apps" for this app, then tap Update Now again.',7000);
+  }catch(e){toast((e&&e.message)||'Update failed. Try again.',5000)}
+  upState='';upBusy=false;renderUp();
+}
+$('#upBtn').onclick=function(){
+  if(!myVer.versionCode){location.href=UP_APK;return}
+  if(hasUpdate())doUpdate();else checkUpdate(true);
+};
+try{YT().addListener('updateProgress',function(r){upPct=(r&&r.percent)||0;if(upState==='downloading')renderUp()})}catch(e){}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)checkUpdate(false)});
+async function initUpdate(){
+  try{myVer=await YT().getAppInfo()}catch(e){myVer={versionCode:0,versionName:''}}
+  upInfo=lsGet('up_info',null);
+  renderUp();
+  checkUpdate(false);
+}
+
 /* ---------- start ---------- */
 setPage('home');
 route();
+initUpdate();
 checkShared();
 setTimeout(async function(){
   if(lsGet('perm_seen',false))return;

@@ -281,4 +281,106 @@ public class YtDlpPlugin extends Plugin {
         o.put("text", t == null ? "" : t);
         call.resolve(o);
     }
+
+    @PluginMethod
+    public void getAppInfo(PluginCall call) {
+        try {
+            android.content.Context c = getContext();
+            android.content.pm.PackageInfo pi = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
+            long code = Build.VERSION.SDK_INT >= 28 ? pi.getLongVersionCode() : pi.versionCode;
+            java.io.File f = new java.io.File(new java.io.File(c.getCacheDir(), "updates"), "update.apk");
+            if (f.exists() && f.lastModified() < pi.lastUpdateTime) f.delete();
+            JSObject o = new JSObject();
+            o.put("versionCode", code);
+            o.put("versionName", pi.versionName == null ? "" : pi.versionName);
+            call.resolve(o);
+        } catch (Exception e) {
+            call.reject("Could not read the app version.");
+        }
+    }
+
+    @PluginMethod
+    public void downloadUpdate(final PluginCall call) {
+        final String url = call.getString("url", "");
+        final double hint = call.getDouble("size", 0.0);
+        if (!url.startsWith("https://github.com/YouTube-VideoAudio/Downloader/releases/download/")) {
+            call.reject("Invalid update link");
+            return;
+        }
+        new Thread(() -> {
+            java.io.File dir = new java.io.File(getContext().getCacheDir(), "updates");
+            dir.mkdirs();
+            java.io.File out = new java.io.File(dir, "update.apk");
+            java.io.File tmp = new java.io.File(dir, "update.part");
+            java.net.HttpURLConnection c = null;
+            try {
+                c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                c.setConnectTimeout(20000);
+                c.setReadTimeout(30000);
+                c.setInstanceFollowRedirects(true);
+                int code = c.getResponseCode();
+                if (code != 200) throw new Exception("HTTP " + code);
+                long total = c.getContentLengthLong();
+                if (total <= 0) total = (long) hint;
+                try (java.io.InputStream is = c.getInputStream(); java.io.FileOutputStream os = new java.io.FileOutputStream(tmp)) {
+                    byte[] buf = new byte[65536];
+                    long done = 0;
+                    int n;
+                    int last = -1;
+                    while ((n = is.read(buf)) > 0) {
+                        os.write(buf, 0, n);
+                        done += n;
+                        if (total > 0) {
+                            int pct = (int) Math.min(100, done * 100 / total);
+                            if (pct != last) {
+                                last = pct;
+                                JSObject o = new JSObject();
+                                o.put("percent", pct);
+                                notifyListeners("updateProgress", o);
+                            }
+                        }
+                    }
+                }
+                if (out.exists()) out.delete();
+                if (!tmp.renameTo(out)) throw new Exception("could not save the file");
+                JSObject r = new JSObject();
+                r.put("size", out.length());
+                call.resolve(r);
+            } catch (Exception e) {
+                tmp.delete();
+                call.reject("Download failed: " + e.getMessage());
+            } finally {
+                if (c != null) c.disconnect();
+            }
+        }).start();
+    }
+
+    @PluginMethod
+    public void installUpdate(PluginCall call) {
+        android.content.Context c = getContext();
+        java.io.File f = new java.io.File(new java.io.File(c.getCacheDir(), "updates"), "update.apk");
+        if (!f.exists()) { call.reject("No downloaded update found."); return; }
+        try {
+            if (Build.VERSION.SDK_INT >= 26 && !c.getPackageManager().canRequestPackageInstalls()) {
+                Intent s = new Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        android.net.Uri.parse("package:" + c.getPackageName()));
+                s.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(s);
+                JSObject o = new JSObject();
+                o.put("needsPermission", true);
+                call.resolve(o);
+                return;
+            }
+            android.net.Uri u = androidx.core.content.FileProvider.getUriForFile(c, c.getPackageName() + ".updates", f);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setDataAndType(u, "application/vnd.android.package-archive");
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            JSObject o = new JSObject();
+            o.put("needsPermission", false);
+            call.resolve(o);
+        } catch (Exception e) {
+            call.reject("Could not open the installer.");
+        }
+    }
 }

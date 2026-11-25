@@ -84,3 +84,18 @@ if 'android.intent.action.SEND' not in s:
 open(p, 'w').write(s)
 PY
 grep -n "action.SEND" android/app/src/main/AndroidManifest.xml
+
+G=android/app/build.gradle
+M=android/app/src/main/AndroidManifest.xml
+sed -i "s/versionCode [0-9]*/versionCode ${GITHUB_RUN_NUMBER:-1}/; s/versionName \"[^\"]*\"/versionName \"1.${GITHUB_RUN_NUMBER:-0}\"/" $G
+mkdir -p android/app/src/main/res/xml
+cat > android/app/src/main/res/xml/update_paths.xml << 'XML'
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path name="updates" path="updates/" />
+</paths>
+XML
+sed -i 's#</application>#        <provider android:name=".UpdateFileProvider" android:authorities="${applicationId}.updates" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/update_paths" /></provider>\n    </application>#' $M
+sed -i 's#</manifest>#    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n</manifest>#' $M
+grep -n "versionCode\|versionName" $G
+grep -n "UpdateFileProvider\|REQUEST_INSTALL_PACKAGES" $M
