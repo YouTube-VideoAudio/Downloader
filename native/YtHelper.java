@@ -139,7 +139,9 @@ final class YtHelper {
     }
 
     private static final String[] BLOCKED = {
-        "chaturbate.com","stripchat.com","onlyfans.com","fansly.com",
+        "pornhub.com","xvideos.com","xnxx.com","xhamster.com","redtube.com","youporn.com","spankbang.com",
+        "eporner.com","tube8.com","porn.com","beeg.com","thumbzilla.com","chaturbate.com","stripchat.com",
+        "onlyfans.com","fansly.com",
         "netflix.com","primevideo.com","disneyplus.com","hulu.com","max.com","hbomax.com","peacocktv.com",
         "paramountplus.com","crunchyroll.com","hotstar.com","jiocinema.com","sonyliv.com","zee5.com",
         "spotify.com","music.apple.com","tv.apple.com","tidal.com","deezer.com"
