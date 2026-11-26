@@ -65,8 +65,12 @@ public class YtDlpPlugin extends Plugin {
             call.reject("Invalid request");
             return;
         }
-        if (Build.VERSION.SDK_INT < 29) {
-            call.reject("Android 10 or newer is required.");
+        if (Build.VERSION.SDK_INT < 29
+                && ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (getActivity() != null) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 7002);
+            }
+            call.reject("Allow storage access, then tap Download again.");
             return;
         }
         if (Build.VERSION.SDK_INT >= 33
@@ -159,7 +163,7 @@ public class YtDlpPlugin extends Plugin {
 
     @PluginMethod
     public void listDownloads(final PluginCall call) {
-        if (android.os.Build.VERSION.SDK_INT < 29) { call.reject("Android 10 or newer is required."); return; }
+        if (android.os.Build.VERSION.SDK_INT < 29) { call.resolve(LegacyFiles.list()); return; }
         new Thread(() -> {
             try {
                 android.content.ContentResolver r = getContext().getContentResolver();
@@ -203,8 +207,8 @@ public class YtDlpPlugin extends Plugin {
     public void play(PluginCall call) {
         String uri = call.getString("uri");
         String title = call.getString("title", "Video");
-        String base = android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString();
-        if (uri == null || !uri.startsWith(base)) { call.reject("Invalid file"); return; }
+        String base = android.os.Build.VERSION.SDK_INT >= 29 ? android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString() : "content://invalid/";
+        if (uri == null || !(uri.startsWith(base) || LegacyFiles.isOurs(uri))) { call.reject("Invalid file"); return; }
         try {
             android.content.Intent i = new android.content.Intent(getContext(), PlayerActivity.class);
             i.putExtra("uri", uri);
@@ -224,10 +228,10 @@ public class YtDlpPlugin extends Plugin {
     @PluginMethod
     public void deleteDownload(PluginCall call) {
         String uri = call.getString("uri");
-        String base = android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString();
-        if (uri == null || !uri.startsWith(base)) { call.reject("Invalid file"); return; }
+        String base = android.os.Build.VERSION.SDK_INT >= 29 ? android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI.toString() : "content://invalid/";
+        if (uri == null || !(uri.startsWith(base) || LegacyFiles.isOurs(uri))) { call.reject("Invalid file"); return; }
         try {
-            int n = getContext().getContentResolver().delete(android.net.Uri.parse(uri), null, null);
+            int n = LegacyFiles.isOurs(uri) ? LegacyFiles.delete(getContext(), uri) : getContext().getContentResolver().delete(android.net.Uri.parse(uri), null, null);
             if (n > 0) call.resolve(); else call.reject("Could not delete this file.");
         } catch (Exception e) {
             call.reject("Could not delete this file.");

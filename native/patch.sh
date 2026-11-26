@@ -41,8 +41,8 @@ JAVA
 G=android/app/build.gradle
 sed -i '0,/^dependencies {/s//dependencies {\n    implementation "io.github.junkfood02.youtubedl-android:library:0.18.1"\n    implementation "io.github.junkfood02.youtubedl-android:ffmpeg:0.18.1"/' $G
 sed -i '0,/^android {/s//android {\n    packaging { jniLibs { useLegacyPackaging = true } }/' $G
-sed -i '0,/defaultConfig {/s//defaultConfig {\n        ndk { abiFilters "arm64-v8a" }/' $G
-sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = 29/' android/variables.gradle
+sed -i '0,/defaultConfig {/s//defaultConfig {\n        ndk { abiFilters "arm64-v8a"; if (project.hasProperty("legacy")) { abiFilters "armeabi-v7a" } }/' $G
+sed -i 's/minSdkVersion = [0-9]*/minSdkVersion = (project.hasProperty("legacy") ? 25 : 29)/' android/variables.gradle
 sed -i 's/<application/<application android:extractNativeLibs="true"/' android/app/src/main/AndroidManifest.xml
 
 echo "--- patched ---"
@@ -99,3 +99,10 @@ sed -i 's#</application>#        <provider android:name=".UpdateFileProvider" an
 sed -i 's#</manifest>#    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n</manifest>#' $M
 grep -n "versionCode\|versionName" $G
 grep -n "UpdateFileProvider\|REQUEST_INSTALL_PACKAGES" $M
+
+G=android/app/build.gradle
+M=android/app/src/main/AndroidManifest.xml
+sed -i 's/versionName "1\.\([0-9]*\)"/versionName ("1.\1" + (project.hasProperty("legacy") ? "-legacy" : ""))/' $G
+sed -i 's#</manifest>#    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n</manifest>#' $M
+grep -n "legacy" $G android/variables.gradle
+grep -n "WRITE_EXTERNAL_STORAGE" $M

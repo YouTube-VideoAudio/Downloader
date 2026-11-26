@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +38,8 @@ public class DownloadService extends Service {
         final String format = intent != null ? intent.getStringExtra("format") : null;
         final String url = intent != null ? intent.getStringExtra("url") : null;
         synchronized (this) { pending++; }
-        startForeground(ONGOING_ID, ongoing(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        if (Build.VERSION.SDK_INT >= 29) startForeground(ONGOING_ID, ongoing(), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        else startForeground(ONGOING_ID, ongoing());
         if (wake == null) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             wake = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "videodownloader:dl");
@@ -61,7 +63,12 @@ public class DownloadService extends Service {
         return START_NOT_STICKY;
     }
 
+    private Notification.Builder builder(String channel) {
+        return Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(this, channel) : new Notification.Builder(this);
+    }
+
     private void createChannels() {
+        if (Build.VERSION.SDK_INT < 26) return;
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.createNotificationChannel(new NotificationChannel(CH_PROGRESS, "Download progress", NotificationManager.IMPORTANCE_LOW));
         nm.createNotificationChannel(new NotificationChannel(CH_DONE, "Download finished", NotificationManager.IMPORTANCE_DEFAULT));
@@ -69,7 +76,7 @@ public class DownloadService extends Service {
 
     private synchronized Notification ongoing() {
         String text = pending <= 1 ? "Downloading... you can leave the app" : pending + " downloads in progress";
-        return new Notification.Builder(this, CH_PROGRESS)
+        return builder(CH_PROGRESS)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentTitle("Video Downloader")
                 .setContentText(text)
@@ -85,7 +92,7 @@ public class DownloadService extends Service {
         open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pi = PendingIntent.getActivity(this, 0, open, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         String text = ok ? "Saved to Downloads/Video Downloader: " + file : (err == null ? "Unknown error" : err);
-        Notification n = new Notification.Builder(this, CH_DONE)
+        Notification n = builder(CH_DONE)
                 .setSmallIcon(ok ? android.R.drawable.stat_sys_download_done : android.R.drawable.stat_notify_error)
                 .setContentTitle(ok ? "Download complete" : "Download failed")
                 .setContentText(text)

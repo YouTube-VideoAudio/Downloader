@@ -144,6 +144,13 @@ body.open{overflow:hidden}
 [data-dev=32bit] .btns{display:none}
 .nodev .force{font-size:13px;margin-top:10px}
 .nodev .force a{color:var(--red);font-weight:700}
+.mini{display:none;align-items:center;gap:8px;margin-top:20px;background:#242424;color:#ddd;border-radius:30px;padding:10px 16px;font-size:13px;text-decoration:none}
+.mini svg{width:16px;height:16px;fill:currentColor;flex:none}
+html:not([data-dev=tv]):not([data-dev=other]) .mini{display:inline-flex}
+[data-dev=old] .mini,[data-dev=32bit] .mini{background:var(--red);color:#fff}
+.nodev .force2{display:none;margin-top:12px}
+[data-dev=old] .force2,[data-dev=32bit] .force2{display:block}
+.nodev .force2 a{display:inline-block;background:var(--red);color:#fff;text-decoration:none;font-weight:700;border-radius:30px;padding:12px 20px}
 </style><script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MobileApplication","name":"Video Downloader","operatingSystem":"Android 10 or newer","applicationCategory":"MultimediaApplication","description":"Download the free Video Downloader app for Android. Paste a link, choose MP4 or MP3 and save it to your phone. No signup, Android 10 or newer.","url":"https://videodownloader.devs.surf/","downloadUrl":"https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
@@ -202,8 +209,9 @@ body.open{overflow:hidden}
 <div class="box2">
 <p class="m m-tv"><b>This app is for Android phones and tablets.</b> It does not work on TVs. Open this page on your phone to get it.</p>
 <p class="m m-other"><b>This app is for Android phones and tablets</b> (Android 10 or newer). It cannot be installed on a computer or iPhone. Open this page on your Android phone to download it.</p>
-<p class="m m-old"><b>Your Android version is too old.</b> The app needs Android 10 or newer.</p>
-<p class="m m-32"><b>Your phone looks like a 32-bit device.</b> The app needs a 64-bit (arm64) Android phone with Android 10 or newer.</p>
+<p class="m m-old"><b>Your Android version is older than 10.</b> Use the Legacy APK below. It works on Android 7.1 and newer.</p>
+<p class="m m-32"><b>Your phone looks like a 32-bit device.</b> Use the Legacy APK below. It works on 32-bit and 64-bit phones.</p>
+<p class="m force2"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk">Download Legacy APK</a></p>
 <p class="m force"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk">Try downloading anyway</a></p>
 <div class="btns"><button id="cp" type="button">Copy link</button><button id="sh" class="o" type="button">Share</button></div>
 </div>
@@ -254,6 +262,7 @@ body.open{overflow:hidden}
 <a class="logo" href="#"><svg class="lg"><use href="#ic"/></svg>Video Downloader</a>
 <ul><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="dmca.html">DMCA</a></li><li><a href="contact.html">Contact</a></li></ul>
 </div>
+<a class="mini" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v9.2l3.6-3.6L18 10l-6 6-6-6 1.4-1.4L11 12.2zM5 19h14v2H5z"/></svg><span>Legacy APK &middot; Android 7.1 to 9, 32-bit phones &middot; about 100 MB</span></a>
 <small>&copy; 2026 Video Downloader. Not affiliated with or endorsed by YouTube or Google. All videos and thumbnails are the property of their respective owners. Please respect copyright.</small>
 </div></footer>
 

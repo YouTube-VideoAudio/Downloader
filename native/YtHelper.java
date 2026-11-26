@@ -72,7 +72,6 @@ final class YtHelper {
     }
 
     static String download(Context ctx, String id, String url, String format) throws Exception {
-        if (Build.VERSION.SDK_INT < 29) throw new Exception("Android 10 or newer is required.");
         ensureInit(ctx);
         final File dir = new File(ctx.getCacheDir(), "dl");
         dir.mkdirs();
@@ -104,6 +103,19 @@ final class YtHelper {
             File f = fs[0];
             String ext = f.getName().substring(f.getName().lastIndexOf('.') + 1);
             String outName = "video-" + id + "." + ext;
+
+            if (Build.VERSION.SDK_INT < 29) {
+                File pub = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Video Downloader");
+                if (!pub.exists() && !pub.mkdirs()) throw new Exception("Cannot create the Downloads folder. Allow storage access and try again.");
+                File dest = new File(pub, outName);
+                try (OutputStream os = new java.io.FileOutputStream(dest); InputStream is = new FileInputStream(f)) {
+                    byte[] buf = new byte[65536];
+                    int n;
+                    while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
+                }
+                android.media.MediaScannerConnection.scanFile(ctx, new String[]{dest.getAbsolutePath()}, null, null);
+                return outName;
+            }
 
             ContentValues v = new ContentValues();
             v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
