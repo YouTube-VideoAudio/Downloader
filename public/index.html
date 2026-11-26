@@ -26,6 +26,7 @@
 <title>Video Downloader APK - Free Video and Audio Downloader for Android</title>
 <script>
 if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())location.replace('app.html');
+(function(){var u=navigator.userAgentData;if(!u||!u.getHighEntropyValues||!/Android/i.test(navigator.userAgent))return;u.getHighEntropyValues(['platformVersion','bitness']).then(function(v){var h=document.documentElement;if(h.getAttribute('data-dev'))return;var pv=parseInt(String(v.platformVersion||'0').split('.')[0],10);var d='';if(pv&&pv<10){d='old'}else if(String(v.bitness)==='32'){d='32bit'}if(d)h.setAttribute('data-dev',d)}).catch(function(){})})();
 (function(){var ua=navigator.userAgent||'';var and=/Android/i.test(ua);var tv=/(\bTV\b|AFT[A-Z]|SMART-?TV|BRAVIA|Tizen|Web0S|CrKey|GoogleTV)/i.test(ua);var m=ua.match(/Android\s+(\d+)/i);var v=m?parseInt(m[1],10):0;var d='';if(tv)d='tv';else if(!and)d='other';else if(v&&v<10)d='old';if(d)document.documentElement.setAttribute('data-dev',d);})();
 </script>
 <style>
@@ -139,6 +140,10 @@ body.open{overflow:hidden}
 .chip{z-index:3}
 .c1{left:-2px;top:26px}
 .c2{top:6px}
+[data-dev=32bit] .m-32,[data-dev=old] .force,[data-dev=32bit] .force{display:block}
+[data-dev=32bit] .btns{display:none}
+.nodev .force{font-size:13px;margin-top:10px}
+.nodev .force a{color:var(--red);font-weight:700}
 </style><script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MobileApplication","name":"Video Downloader","operatingSystem":"Android 10 or newer","applicationCategory":"MultimediaApplication","description":"Download the free Video Downloader app for Android. Paste a link, choose MP4 or MP3 and save it to your phone. No signup, Android 10 or newer.","url":"https://videodownloader.devs.surf/","downloadUrl":"https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
@@ -198,6 +203,8 @@ body.open{overflow:hidden}
 <p class="m m-tv"><b>This app is for Android phones and tablets.</b> It does not work on TVs. Open this page on your phone to get it.</p>
 <p class="m m-other"><b>This app is for Android phones and tablets</b> (Android 10 or newer). It cannot be installed on a computer or iPhone. Open this page on your Android phone to download it.</p>
 <p class="m m-old"><b>Your Android version is too old.</b> The app needs Android 10 or newer.</p>
+<p class="m m-32"><b>Your phone looks like a 32-bit device.</b> The app needs a 64-bit (arm64) Android phone with Android 10 or newer.</p>
+<p class="m force"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk">Try downloading anyway</a></p>
 <div class="btns"><button id="cp" type="button">Copy link</button><button id="sh" class="o" type="button">Share</button></div>
 </div>
 </div>
