@@ -234,13 +234,10 @@ body.has-up .tab[data-p=more] .dot{display:block}
 
 <section class="page" id="p-more">
 <div class="bar"><b>More</b></div>
-<div class="h3s">App update</div>
+<div class="h3s">Updates</div>
 <div class="grp">
 <div class="item"><div class="ic2" style="position:relative"><svg class="i"><use href="#i-dl"/></svg><i class="newdot" id="upDot"></i></div><div class="tx"><b id="upT">Check for updates</b><span id="upS">&nbsp;</span><div class="pbar" id="upBar"><i id="upFill"></i></div></div><button class="upb ghost" id="upBtn" type="button">Check</button></div>
-</div>
-<div class="h3s">Download engine</div>
-<div class="grp">
-<div class="item"><div class="ic2"><svg class="i"><use href="#i-bolt"/></svg></div><div class="tx"><b>yt-dlp</b><span id="enS">Checking...</span></div><button class="upb ghost" id="enBtn" type="button">Update</button></div>
+<div class="item"><div class="ic2"><svg class="i"><use href="#i-bolt"/></svg></div><div class="tx"><b>Download engine</b><span id="enS">Checking...</span></div></div>
 </div>
 <div class="h3s">Permissions</div>
 <div class="grp">
@@ -688,7 +685,7 @@ async function doUpdate(){
 }
 $('#upBtn').onclick=function(){
   if(!myVer.versionCode){location.href=UP_APK;return}
-  if(hasUpdate())doUpdate();else checkUpdate(true);
+  if(hasUpdate())doUpdate();else checkAll();
 };
 try{YT().addListener('updateProgress',function(r){upPct=(r&&r.percent)||0;if(upState==='downloading')renderUp()})}catch(e){}
 document.addEventListener('visibilitychange',function(){if(!document.hidden)checkUpdate(false)});
@@ -700,23 +697,56 @@ async function initUpdate(){
 }
 
 /* ---------- download engine ---------- */
+function engineStatus(n){
+  n=n||'';
+  if(n.indexOf('upd-fail')===0)return ' \u00b7 update failed ('+n.replace(/^upd-fail:\s*/,'').slice(0,110)+')';
+  if(n.indexOf('upd:')===0)return n.indexOf('ALREADY')>-1?' \u00b7 up to date':' \u00b7 updated';
+  return '';
+}
 async function renderEngine(){
   var s=$('#enS');if(!s)return;
   try{
     var r=await YT().engineInfo();
-    var n=r.note||'';
-    s.textContent='Version '+(r.version||'unknown')+(n.indexOf('upd-fail')===0?' \u00b7 last update failed':(n.indexOf('upd:')===0?' \u00b7 up to date':''));
+    s.textContent='yt-dlp '+(r.version||'unknown version')+engineStatus(r.note);
   }catch(e){s.textContent='Could not read engine info.'}
 }
-$('#enBtn').onclick=async function(){
-  var b=this;b.disabled=true;b.textContent='Updating...';
+async function fetchLatest(){
   try{
-    var r=await YT().updateEngine();
-    await renderEngine();
-    toast((r.note||'Done').slice(0,200),7000);
-  }catch(e){toast((e&&e.message)||'Update failed.',6000)}
-  b.disabled=false;b.textContent='Update';
-};
+    var r=await fetch(UP_API,{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
+    if(!r.ok)throw new Error('http');
+    var j=await r.json();
+    var m=/versionCode:\s*(\d+)/.exec(j.body||'');
+    var legacy=/legacy/i.test(myVer.versionName||'');
+    var a=(j.assets||[]).filter(function(x){return /\.apk$/i.test(x.name)&&/legacy/i.test(x.name)===legacy})[0];
+    if(!m||!a)throw new Error('no info');
+    upInfo={code:parseInt(m[1],10),url:a.browser_download_url,size:a.size||0};
+    lsSet('up_info',upInfo);lsSet('up_check',Date.now());
+    return true;
+  }catch(e){return false}
+}
+var chkBusy=false;
+async function checkAll(){
+  if(chkBusy)return;
+  chkBusy=true;
+  var b=$('#upBtn');b.disabled=true;b.textContent='Checking...';
+  var s=$('#enS');if(s)s.textContent='Checking yt-dlp...';
+  var eng=null,engErr='',appOk=false;
+  await Promise.all([
+    fetchLatest().then(function(ok){appOk=ok}),
+    (function(){try{return YT().updateEngine()}catch(e){return Promise.reject(e)}})().then(function(r){eng=r}).catch(function(e){engErr=(e&&e.message)||'not available in this app version'})
+  ]);
+  var parts=[];
+  if(!appOk)parts.push('Could not check for app updates');
+  else parts.push(hasUpdate()?'New app version available':'App is up to date');
+  if(eng){
+    var st=engineStatus(eng.note);
+    parts.push(st.indexOf('failed')>-1?'yt-dlp update failed':(st.indexOf('updated')>-1?'yt-dlp updated':'yt-dlp is up to date'));
+  }else parts.push('yt-dlp: '+engErr);
+  await renderEngine();
+  renderUp();
+  chkBusy=false;
+  toast(parts.join(' \u00b7 '),6500);
+}
 
 /* ---------- start ---------- */
 setPage('home');
