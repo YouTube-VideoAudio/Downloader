@@ -17,23 +17,55 @@ import java.io.OutputStream;
 
 final class YtHelper {
     private static boolean ready = false;
-    private static boolean updated = false;
-    private static String updNote = "";
+    private static boolean updateOk = false;
+    private static int updateTries = 0;
+    private static String updNote = "not-run";
 
     private YtHelper() {}
 
-    static synchronized void ensureInit(Context ctx) throws Exception {
+    private static synchronized void initOnly(Context ctx) throws Exception {
         if (ready) return;
         Context app = ctx.getApplicationContext();
         YoutubeDL.getInstance().init(app);
         FFmpeg.getInstance().init(app);
-        updateYtDlp(app);
         ready = true;
     }
 
+    static synchronized void ensureInit(Context ctx) throws Exception {
+        initOnly(ctx);
+        if (!updateOk && updateTries < 3) updateYtDlp(ctx.getApplicationContext());
+    }
+
+    static synchronized String updateEngine(Context ctx) throws Exception {
+        initOnly(ctx);
+        updateYtDlp(ctx.getApplicationContext());
+        return updNote;
+    }
+
+    static String engineVersion(Context ctx) {
+        try {
+            initOnly(ctx);
+            YoutubeDL y = YoutubeDL.getInstance();
+            Object v = y.getClass().getMethod("version", Context.class).invoke(y, ctx.getApplicationContext());
+            return v == null ? "" : v.toString();
+        } catch (Throwable t) {
+            return "";
+        }
+    }
+
+    static String engineNote() { return updNote; }
+
+    private static String rootMsg(Throwable t) {
+        Throwable c = t;
+        int guard = 0;
+        while (c.getCause() != null && c.getCause() != c && guard++ < 8) c = c.getCause();
+        String m = String.valueOf(c.getMessage());
+        if (m.length() > 140) m = m.substring(0, 140);
+        return c.getClass().getSimpleName() + ": " + m;
+    }
+
     private static void updateYtDlp(Context app) {
-        if (updated) return;
-        updated = true;
+        updateTries++;
         try {
             Class<?> ch = Class.forName("com.yausername.youtubedl_android.YoutubeDL$UpdateChannel");
             Object stable = null;
@@ -45,8 +77,9 @@ final class YtHelper {
             YoutubeDL y = YoutubeDL.getInstance();
             Object r = y.getClass().getMethod("updateYoutubeDL", Context.class, ch).invoke(y, app, stable);
             updNote = "upd:" + r;
+            updateOk = true;
         } catch (Throwable t) {
-            updNote = "upd-fail:" + t.getClass().getSimpleName();
+            updNote = "upd-fail: " + rootMsg(t);
             android.util.Log.e("YtDlp", "update failed", t);
         }
     }
@@ -69,85 +102,6 @@ final class YtHelper {
             r = msg.length() > 300 ? msg.substring(msg.length() - 300) : msg;
         }
         return r + " [" + updNote + "]";
-    }
-
-    static String download(Context ctx, String id, String url, String format) throws Exception {
-        ensureInit(ctx);
-        final File dir = new File(ctx.getCacheDir(), "dl");
-        dir.mkdirs();
-        final String prefix = "v" + System.currentTimeMillis() + ".";
-        try {
-            String target = target(id, url);
-            if (target == null) throw new Exception("Invalid link");
-            YoutubeDLRequest req = new YoutubeDLRequest(target);
-            req.addOption("--no-playlist");
-            req.addOption("--playlist-items", "1");
-            req.addOption("--force-ipv4");
-            req.addOption("--retries", "3");
-            req.addOption("--fragment-retries", "3");
-            req.addOption("--socket-timeout", "20");
-            req.addOption("-o", new File(dir, prefix + "%(ext)s").getAbsolutePath());
-            if (format.equals("mp3")) {
-                req.addOption("-x");
-                req.addOption("--audio-format", "mp3");
-                req.addOption("--audio-quality", "0");
-            } else {
-                String h = format.substring(4);
-                req.addOption("-f", "bv*[height<=" + h + "][vcodec^=avc1]+ba[ext=m4a]/bv*[height<=" + h + "]+ba/b[height<=" + h + "]/b");
-                req.addOption("--merge-output-format", "mp4");
-            }
-            YoutubeDL.getInstance().execute(req, "dl-" + prefix, false, null);
-
-            File[] fs = dir.listFiles((d, nm) -> nm.startsWith(prefix));
-            if (fs == null || fs.length == 0) throw new Exception("no file");
-            File f = fs[0];
-            String ext = f.getName().substring(f.getName().lastIndexOf('.') + 1);
-            String outName = "video-" + id + "." + ext;
-
-            if (Build.VERSION.SDK_INT < 29) {
-                File pub = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Video Downloader");
-                if (!pub.exists() && !pub.mkdirs()) throw new Exception("Cannot create the Downloads folder. Allow storage access and try again.");
-                File dest = new File(pub, outName);
-                try (OutputStream os = new java.io.FileOutputStream(dest); InputStream is = new FileInputStream(f)) {
-                    byte[] buf = new byte[65536];
-                    int n;
-                    while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
-                }
-                android.media.MediaScannerConnection.scanFile(ctx, new String[]{dest.getAbsolutePath()}, null, null);
-                return outName;
-            }
-
-            ContentValues v = new ContentValues();
-            v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
-            v.put(MediaStore.MediaColumns.MIME_TYPE, mimeFor(ext));
-            v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Video Downloader");
-            ContentResolver r = ctx.getContentResolver();
-            Uri u = r.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
-            if (u == null) throw new Exception("save failed");
-            try (OutputStream os = r.openOutputStream(u); InputStream is = new FileInputStream(f)) {
-                byte[] buf = new byte[65536];
-                int n;
-                while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
-            }
-            return outName;
-        } finally {
-            File[] left = dir.listFiles((d, nm) -> nm.startsWith(prefix));
-            if (left != null) for (File x : left) x.delete();
-        }
-    }
-
-    static String search(Context ctx, String query, int n) throws Exception {
-        ensureInit(ctx);
-        YoutubeDLRequest req = new YoutubeDLRequest("ytsearch" + n + ":" + query);
-        req.addOption("--flat-playlist");
-        req.addOption("--dump-single-json");
-        req.addOption("--no-warnings");
-        req.addOption("--force-ipv4");
-        req.addOption("--retries", "2");
-        req.addOption("--socket-timeout", "20");
-        com.yausername.youtubedl_android.YoutubeDLResponse resp =
-                YoutubeDL.getInstance().execute(req, "s-" + System.currentTimeMillis(), false, null);
-        return resp.getOut();
     }
 
     private static final String[] BLOCKED = {
@@ -190,5 +144,107 @@ final class YtHelper {
             case "mkv": return "video/x-matroska";
             default: return "video/mp4";
         }
+    }
+
+    private static YoutubeDLRequest request(String target, File dir, String prefix, String format, String client) {
+        YoutubeDLRequest req = new YoutubeDLRequest(target);
+        req.addOption("--no-playlist");
+        req.addOption("--playlist-items", "1");
+        req.addOption("--force-ipv4");
+        req.addOption("--retries", "3");
+        req.addOption("--fragment-retries", "3");
+        req.addOption("--socket-timeout", "20");
+        req.addOption("-o", new File(dir, prefix + "%(ext)s").getAbsolutePath());
+        if (client != null) req.addOption("--extractor-args", "youtube:player_client=" + client);
+        if (format.equals("mp3")) {
+            req.addOption("-x");
+            req.addOption("--audio-format", "mp3");
+            req.addOption("--audio-quality", "0");
+        } else {
+            String h = format.substring(4);
+            req.addOption("-f", "bv*[height<=" + h + "][vcodec^=avc1]+ba[ext=m4a]/bv*[height<=" + h + "]+ba/b[height<=" + h + "]/b");
+            req.addOption("--merge-output-format", "mp4");
+        }
+        return req;
+    }
+
+    private static void deleteWithPrefix(File dir, String prefix) {
+        File[] left = dir.listFiles((d, nm) -> nm.startsWith(prefix));
+        if (left != null) for (File x : left) x.delete();
+    }
+
+    static String download(Context ctx, String id, String url, String format) throws Exception {
+        ensureInit(ctx);
+        final File dir = new File(ctx.getCacheDir(), "dl");
+        dir.mkdirs();
+        final String prefix = "v" + System.currentTimeMillis() + ".";
+        try {
+            String target = target(id, url);
+            if (target == null) throw new Exception("Invalid link");
+            boolean yt = target.contains("youtube.com") || target.contains("youtu.be");
+            String[] clients = yt ? new String[]{null, "android_vr"} : new String[]{null};
+            Exception failure = null;
+            for (int i = 0; i < clients.length; i++) {
+                try {
+                    YoutubeDL.getInstance().execute(request(target, dir, prefix, format, clients[i]), "dl-" + prefix + i, false, null);
+                    failure = null;
+                    break;
+                } catch (Exception e) {
+                    failure = e;
+                    deleteWithPrefix(dir, prefix);
+                    if (!String.valueOf(e.getMessage()).contains("403")) break;
+                }
+            }
+            if (failure != null) throw failure;
+
+            File[] fs = dir.listFiles((d, nm) -> nm.startsWith(prefix) && !nm.endsWith(".part") && !nm.endsWith(".ytdl") && !nm.endsWith(".temp"));
+            if (fs == null || fs.length == 0) throw new Exception("no file");
+            File f = fs[0];
+            String ext = f.getName().substring(f.getName().lastIndexOf('.') + 1);
+            String outName = "video-" + id + "." + ext;
+
+            if (Build.VERSION.SDK_INT < 29) {
+                File pub = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Video Downloader");
+                if (!pub.exists() && !pub.mkdirs()) throw new Exception("Cannot create the Downloads folder. Allow storage access and try again.");
+                File dest = new File(pub, outName);
+                try (OutputStream os = new java.io.FileOutputStream(dest); InputStream is = new FileInputStream(f)) {
+                    byte[] buf = new byte[65536];
+                    int n;
+                    while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
+                }
+                android.media.MediaScannerConnection.scanFile(ctx, new String[]{dest.getAbsolutePath()}, null, null);
+                return outName;
+            }
+
+            ContentValues v = new ContentValues();
+            v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
+            v.put(MediaStore.MediaColumns.MIME_TYPE, mimeFor(ext));
+            v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/Video Downloader");
+            ContentResolver r = ctx.getContentResolver();
+            Uri u = r.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+            if (u == null) throw new Exception("save failed");
+            try (OutputStream os = r.openOutputStream(u); InputStream is = new FileInputStream(f)) {
+                byte[] buf = new byte[65536];
+                int n;
+                while ((n = is.read(buf)) > 0) os.write(buf, 0, n);
+            }
+            return outName;
+        } finally {
+            deleteWithPrefix(dir, prefix);
+        }
+    }
+
+    static String search(Context ctx, String query, int n) throws Exception {
+        ensureInit(ctx);
+        YoutubeDLRequest req = new YoutubeDLRequest("ytsearch" + n + ":" + query);
+        req.addOption("--flat-playlist");
+        req.addOption("--dump-single-json");
+        req.addOption("--no-warnings");
+        req.addOption("--force-ipv4");
+        req.addOption("--retries", "2");
+        req.addOption("--socket-timeout", "20");
+        com.yausername.youtubedl_android.YoutubeDLResponse resp =
+                YoutubeDL.getInstance().execute(req, "s-" + System.currentTimeMillis(), false, null);
+        return resp.getOut();
     }
 }

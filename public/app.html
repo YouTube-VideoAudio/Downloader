@@ -238,6 +238,10 @@ body.has-up .tab[data-p=more] .dot{display:block}
 <div class="grp">
 <div class="item"><div class="ic2" style="position:relative"><svg class="i"><use href="#i-dl"/></svg><i class="newdot" id="upDot"></i></div><div class="tx"><b id="upT">Check for updates</b><span id="upS">&nbsp;</span><div class="pbar" id="upBar"><i id="upFill"></i></div></div><button class="upb ghost" id="upBtn" type="button">Check</button></div>
 </div>
+<div class="h3s">Download engine</div>
+<div class="grp">
+<div class="item"><div class="ic2"><svg class="i"><use href="#i-bolt"/></svg></div><div class="tx"><b>yt-dlp</b><span id="enS">Checking...</span></div><button class="upb ghost" id="enBtn" type="button">Update</button></div>
+</div>
 <div class="h3s">Permissions</div>
 <div class="grp">
 <div class="item"><div class="ic2"><svg class="i"><use href="#i-bell"/></svg></div><div class="tx"><b>Notifications</b><span>Progress and finished downloads</span></div><button class="pn" type="button">Allow</button></div>
@@ -334,7 +338,7 @@ function setPage(p){
   $$('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===p)});
   window.scrollTo(0,0);
   if(p==='downloads'||p==='home')refresh();
-  if(p==='more'){renderPerm();renderUp()}
+  if(p==='more'){renderPerm();renderUp();renderEngine()}
 }
 function route(){
   var h=hash();
@@ -435,7 +439,7 @@ function renderErr(){
 function onDone(r){
   var it=active.shift();renderActive();
   if(r&&r.ok){lastErr=null;toast('Saved: '+(r.file||''),4000)}
-  else{lastErr='Download failed'+(it?': '+it.title:'')+'. '+((r&&r.error)||'');toast('Download failed',3500)}
+  else{lastErr='Download failed'+(it?': '+it.title:'')+'. '+((r&&r.error)||'');if(/403/.test(lastErr))lastErr+=' Tip: open More and tap Update next to yt-dlp.';toast('Download failed',3500)}
   renderErr();
   if(page==='downloads'||page==='home')refresh();
 }
@@ -694,6 +698,25 @@ async function initUpdate(){
   renderUp();
   checkUpdate(false);
 }
+
+/* ---------- download engine ---------- */
+async function renderEngine(){
+  var s=$('#enS');if(!s)return;
+  try{
+    var r=await YT().engineInfo();
+    var n=r.note||'';
+    s.textContent='Version '+(r.version||'unknown')+(n.indexOf('upd-fail')===0?' \u00b7 last update failed':(n.indexOf('upd:')===0?' \u00b7 up to date':''));
+  }catch(e){s.textContent='Could not read engine info.'}
+}
+$('#enBtn').onclick=async function(){
+  var b=this;b.disabled=true;b.textContent='Updating...';
+  try{
+    var r=await YT().updateEngine();
+    await renderEngine();
+    toast((r.note||'Done').slice(0,200),7000);
+  }catch(e){toast((e&&e.message)||'Update failed.',6000)}
+  b.disabled=false;b.textContent='Update';
+};
 
 /* ---------- start ---------- */
 setPage('home');

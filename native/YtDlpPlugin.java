@@ -387,4 +387,29 @@ public class YtDlpPlugin extends Plugin {
             call.reject("Could not open the installer.");
         }
     }
+
+    @PluginMethod
+    public void engineInfo(final PluginCall call) {
+        new Thread(() -> {
+            JSObject o = new JSObject();
+            o.put("version", YtHelper.engineVersion(getContext()));
+            o.put("note", YtHelper.engineNote());
+            call.resolve(o);
+        }).start();
+    }
+
+    @PluginMethod
+    public void updateEngine(final PluginCall call) {
+        new Thread(() -> {
+            try {
+                String note = YtHelper.updateEngine(getContext());
+                JSObject o = new JSObject();
+                o.put("note", note);
+                o.put("version", YtHelper.engineVersion(getContext()));
+                call.resolve(o);
+            } catch (Exception e) {
+                call.reject("Could not update: " + e.getMessage());
+            }
+        }).start();
+    }
 }
