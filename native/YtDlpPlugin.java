@@ -412,4 +412,27 @@ public class YtDlpPlugin extends Plugin {
             }
         }).start();
     }
+
+    @PluginMethod
+    public void checkUpdates(final PluginCall call) {
+        new Thread(() -> {
+            JSObject o = new JSObject();
+            try {
+                String raw = Net.get("https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/version.json", 10000);
+                org.json.JSONObject j = new org.json.JSONObject(raw);
+                o.put("appCode", j.optLong("versionCode", 0));
+                o.put("appSize", j.optLong("size", 0));
+                o.put("legacySize", j.optLong("legacySize", 0));
+            } catch (Exception e) {
+                o.put("appError", String.valueOf(e.getMessage()));
+            }
+            try {
+                o.put("engineLatest", YtHelper.latestTag());
+            } catch (Exception e) {
+                o.put("engineError", String.valueOf(e.getMessage()));
+            }
+            o.put("engineVersion", YtHelper.engineVersion(getContext()));
+            call.resolve(o);
+        }).start();
+    }
 }

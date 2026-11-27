@@ -33,7 +33,14 @@ final class YtHelper {
 
     static synchronized void ensureInit(Context ctx) throws Exception {
         initOnly(ctx);
-        if (!updateOk && updateTries < 3) updateYtDlp(ctx.getApplicationContext());
+        if (!updateOk && updateTries < 3) {
+            if (isCurrent(ctx)) {
+                updateOk = true;
+                updNote = "upd:ALREADY_UP_TO_DATE";
+            } else {
+                updateYtDlp(ctx.getApplicationContext());
+            }
+        }
     }
 
     static synchronized String updateEngine(Context ctx) throws Exception {
@@ -50,6 +57,39 @@ final class YtHelper {
             return v == null ? "" : v.toString();
         } catch (Throwable t) {
             return "";
+        }
+    }
+
+    static String latestTag() throws Exception {
+        String loc = Net.redirectTarget("https://github.com/yt-dlp/yt-dlp/releases/latest", 8000);
+        int i = loc.lastIndexOf("/tag/");
+        if (i < 0) throw new Exception("no tag in redirect");
+        return loc.substring(i + 5).trim();
+    }
+
+    static int cmpVer(String a, String b) {
+        String[] x = a.split("\\D+");
+        String[] y = b.split("\\D+");
+        int n = Math.max(x.length, y.length);
+        for (int i = 0; i < n; i++) {
+            long p = parseNum(x, i), q = parseNum(y, i);
+            if (p != q) return p > q ? 1 : -1;
+        }
+        return 0;
+    }
+
+    private static long parseNum(String[] a, int i) {
+        if (i >= a.length || a[i].isEmpty()) return 0;
+        try { return Long.parseLong(a[i]); } catch (Exception e) { return 0; }
+    }
+
+    private static boolean isCurrent(Context ctx) {
+        try {
+            String v = engineVersion(ctx);
+            if (v == null || v.isEmpty()) return false;
+            return cmpVer(v, latestTag()) >= 0;
+        } catch (Throwable t) {
+            return false;
         }
     }
 

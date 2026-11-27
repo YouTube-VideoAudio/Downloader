@@ -658,18 +658,8 @@ async function checkUpdate(manual){
   if(!manual&&Date.now()-lsGet('up_check',0)<3*3600*1000)return;
   var b=$('#upBtn');
   if(manual){b.disabled=true;b.textContent='Checking...'}
-  try{
-    var r=await fetch(UP_API,{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
-    if(!r.ok)throw new Error('http');
-    var j=await r.json();
-    var m=/versionCode:\s*(\d+)/.exec(j.body||'');
-    var legacy=/legacy/i.test(myVer.versionName||'');
-    var a=(j.assets||[]).filter(function(x){return /\.apk$/i.test(x.name)&&/legacy/i.test(x.name)===legacy})[0];
-    if(!m||!a)throw new Error('no info');
-    upInfo={code:parseInt(m[1],10),url:a.browser_download_url,size:a.size||0};
-    lsSet('up_info',upInfo);lsSet('up_check',Date.now());
-    if(manual&&!hasUpdate())toast('You have the latest version.');
-  }catch(e){if(manual)toast('Could not check for updates. Check your connection.',4000)}
+  var ok=await fetchLatest();
+  if(manual)toast(ok?(hasUpdate()?'New app version available.':'You have the latest version.'):'Could not check for updates. Check your connection.',4000);
   renderUp();
 }
 async function doUpdate(){
@@ -697,26 +687,36 @@ async function initUpdate(){
 }
 
 /* ---------- download engine ---------- */
-function engineStatus(n){
-  n=n||'';
-  if(n.indexOf('upd-fail')===0)return ' \u00b7 update failed ('+n.replace(/^upd-fail:\s*/,'').slice(0,110)+')';
-  if(n.indexOf('upd:')===0)return n.indexOf('ALREADY')>-1?' \u00b7 up to date':' \u00b7 updated';
-  return '';
+var engFlag='',lastInfo=null;
+var LEG_APK='https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk';
+function cmpVer(a,b){
+  var x=String(a).split(/\D+/).filter(Boolean).map(Number),y=String(b).split(/\D+/).filter(Boolean).map(Number);
+  for(var i=0;i<Math.max(x.length,y.length);i++){var p=x[i]||0,q=y[i]||0;if(p!==q)return p>q?1:-1}
+  return 0;
 }
 async function renderEngine(){
   var s=$('#enS');if(!s)return;
   try{
     var r=await YT().engineInfo();
-    s.textContent='yt-dlp '+(r.version||'unknown version')+engineStatus(r.note);
+    s.textContent='yt-dlp '+(r.version||'unknown version')+(engFlag?' \u00b7 '+engFlag:'');
   }catch(e){s.textContent='Could not read engine info.'}
 }
 async function fetchLatest(){
+  var legacy=/legacy/i.test(myVer.versionName||'');
+  try{
+    var i=await YT().checkUpdates();
+    lastInfo=i||null;
+    if(i&&i.appCode){
+      upInfo={code:i.appCode,url:legacy?LEG_APK:UP_APK,size:legacy?(i.legacySize||0):(i.appSize||0)};
+      lsSet('up_info',upInfo);lsSet('up_check',Date.now());
+      return true;
+    }
+  }catch(e){}
   try{
     var r=await fetch(UP_API,{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
     if(!r.ok)throw new Error('http');
     var j=await r.json();
     var m=/versionCode:\s*(\d+)/.exec(j.body||'');
-    var legacy=/legacy/i.test(myVer.versionName||'');
     var a=(j.assets||[]).filter(function(x){return /\.apk$/i.test(x.name)&&/legacy/i.test(x.name)===legacy})[0];
     if(!m||!a)throw new Error('no info');
     upInfo={code:parseInt(m[1],10),url:a.browser_download_url,size:a.size||0};
@@ -729,19 +729,22 @@ async function checkAll(){
   if(chkBusy)return;
   chkBusy=true;
   var b=$('#upBtn');b.disabled=true;b.textContent='Checking...';
-  var s=$('#enS');if(s)s.textContent='Checking yt-dlp...';
-  var eng=null,engErr='',appOk=false;
-  await Promise.all([
-    fetchLatest().then(function(ok){appOk=ok}),
-    (function(){try{return YT().updateEngine()}catch(e){return Promise.reject(e)}})().then(function(r){eng=r}).catch(function(e){engErr=(e&&e.message)||'not available in this app version'})
-  ]);
+  engFlag='checking...';renderEngine();
+  lastInfo=null;
+  var appOk=await fetchLatest();
   var parts=[];
-  if(!appOk)parts.push('Could not check for app updates');
-  else parts.push(hasUpdate()?'New app version available':'App is up to date');
-  if(eng){
-    var st=engineStatus(eng.note);
-    parts.push(st.indexOf('failed')>-1?'yt-dlp update failed':(st.indexOf('updated')>-1?'yt-dlp updated':'yt-dlp is up to date'));
-  }else parts.push('yt-dlp: '+engErr);
+  parts.push(!appOk?'Could not check for app updates':(hasUpdate()?'New app version available':'App is up to date'));
+  var cur=lastInfo&&lastInfo.engineVersion,latest=lastInfo&&lastInfo.engineLatest;
+  if(cur&&latest&&cmpVer(cur,latest)>=0){
+    engFlag='up to date';parts.push('yt-dlp is up to date');
+  }else{
+    try{
+      var r=await YT().updateEngine();
+      var n=(r&&r.note)||'';
+      if(n.indexOf('upd-fail')===0){engFlag='update failed ('+n.replace(/^upd-fail:\s*/,'').slice(0,110)+')';parts.push('yt-dlp update failed')}
+      else{engFlag=n.indexOf('ALREADY')>-1?'up to date':'updated';parts.push('yt-dlp '+engFlag)}
+    }catch(e){engFlag='';parts.push('yt-dlp check unavailable')}
+  }
   await renderEngine();
   renderUp();
   chkBusy=false;
