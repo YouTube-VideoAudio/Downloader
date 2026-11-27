@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffe1e5">
+<meta name="theme-color" content="#fff1f3">
 <meta name="description" content="Download the free Video Downloader app for Android. Paste a link, choose MP4 or MP3 and save it to your phone. No signup, Android 10 or newer.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://videodownloader.devs.surf/">
@@ -24,134 +24,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="application-name" content="Video Downloader">
 <title>Video Downloader APK - Free Video and Audio Downloader for Android</title>
-<script>
-if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())location.replace('app.html');
-(function(){var u=navigator.userAgentData;if(!u||!u.getHighEntropyValues||!/Android/i.test(navigator.userAgent))return;u.getHighEntropyValues(['platformVersion','bitness']).then(function(v){var h=document.documentElement;if(h.getAttribute('data-dev'))return;var pv=parseInt(String(v.platformVersion||'0').split('.')[0],10);var d='';if(pv&&pv<10){d='old'}else if(String(v.bitness)==='32'){d='32bit'}if(d)h.setAttribute('data-dev',d)}).catch(function(){})})();
-(function(){var ua=navigator.userAgent||'';var and=/Android/i.test(ua);var tv=/(\bTV\b|AFT[A-Z]|SMART-?TV|BRAVIA|Tizen|Web0S|CrKey|GoogleTV)/i.test(ua);var m=ua.match(/Android\s+(\d+)/i);var v=m?parseInt(m[1],10):0;var d='';if(tv)d='tv';else if(!and)d='other';else if(v&&v<10)d='old';if(d)document.documentElement.setAttribute('data-dev',d);})();
-</script>
-<style>
-:root{--red:#d6293e;--tint:#ffe1e5;--dark:#2b2b2b;--mute:#666;--soft:#f4f4f4}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-body{font-family:Roboto,Arial,Helvetica,sans-serif;color:#222;background:#fff;line-height:1.5}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--red);outline-offset:2px}
-.c{width:min(1000px,100% - 32px);margin-inline:auto}
-header{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;padding:10px 12px;background:#fff;position:sticky;top:0;z-index:20;border-bottom:2px solid #f0f0f0}
-.mb{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;cursor:pointer}
-.mb svg{width:26px;height:26px;stroke:#333;stroke-width:2.4;fill:none;stroke-linecap:round}
-.logo{display:flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-weight:900;font-size:20px;letter-spacing:-.5px;white-space:nowrap}
-.lg{width:34px;height:34px;border-radius:9px;flex:none}
-.hd{width:42px;height:42px;border-radius:50%;background:var(--red);display:grid;place-items:center;justify-self:end}
-.hd svg{width:22px;height:22px;fill:#fff}
-
-.hero{background:var(--tint);border-radius:0 0 clamp(36px,7vw,80px) clamp(36px,7vw,80px);padding:38px 0 44px;text-align:center;overflow:hidden}
-h1{font-size:clamp(30px,6.4vw,56px);font-weight:900;line-height:1.1;letter-spacing:-1px;max-width:760px;margin:0 auto}
-.badge{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:var(--red);font-weight:700;font-size:15px}
-.badge svg{width:20px;height:20px;fill:var(--red)}
-.sub{color:#6b4a50;max-width:460px;margin:10px auto 0;font-size:16px}
-
-.stage{position:relative;width:min(380px,100%);height:420px;margin:28px auto 24px}
-.phone{position:absolute;left:10px;top:0;width:210px;height:400px;background:#fff;border:7px solid #222;border-radius:34px;padding:14px 12px;text-align:left}
-.ph-top{display:flex;align-items:center;gap:6px;font-weight:900;font-size:12px;margin-bottom:12px}
-.ph-top .lg{width:20px;height:20px;border-radius:6px}
-.ph-s{background:#f1f1f1;border-radius:20px;padding:7px 8px 7px 10px;font-size:11px;color:#888;display:flex;justify-content:space-between;align-items:center}
-.ph-s b{background:var(--red);color:#fff;border-radius:14px;padding:4px 9px;font-size:10px}
-.ph-t{margin-top:12px;height:112px;border-radius:14px;background:#e4e4e4;display:grid;place-items:center}
-.ph-t i{width:38px;height:38px;border-radius:50%;background:var(--red);display:grid;place-items:center}
-.ph-t i::after{content:"";border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
-.ph-l{height:9px;border-radius:5px;background:#e8e8e8;margin-top:10px}
-.ph-l.s{width:60%}
-.ph-b{margin-top:16px;background:var(--red);color:#fff;text-align:center;font-weight:700;font-size:12px;padding:10px;border-radius:20px}
-.qc{position:absolute;right:0;bottom:36px;width:176px;background:#fff;border:2px solid #222;border-radius:18px;padding:10px;text-align:left}
-.qc h5{font-size:12px;color:var(--red);margin:2px 4px 6px}
-.qc div{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:12px;font-size:12px;font-weight:700}
-.qc div.on{background:var(--tint)}
-.qc div.on::after{content:"\2713";color:var(--red)}
-.chip{position:absolute;background:#fff;border:2px solid #222;border-radius:20px;padding:5px 12px;font-weight:900;font-size:13px}
-.c1{left:-6px;top:44px}
-.c2{right:4px;top:16px;background:var(--red);color:#fff;border-color:var(--red)}
-@media(max-width:370px){.qc{width:150px}.phone{width:190px}}
-
-.big{display:flex;align-items:center;justify-content:center;gap:12px;width:min(100%,520px);margin:0 auto;padding:20px 24px;border-radius:60px;background:var(--red);color:#fff;font-size:20px;font-weight:900;text-decoration:none;transition:transform .12s}
-.big svg{width:26px;height:26px;fill:#fff}
-.big:active{transform:scale(.98)}
-.note{margin-top:14px;font-size:13px;color:#8a4a53}
-.rep{display:inline-block;margin-top:10px;color:#a10f25;font-size:14px}
-
-section.s{padding:clamp(48px,8vw,88px) 0}
-.h{text-align:center;font-size:clamp(28px,5vw,44px);font-weight:900;line-height:1.1;letter-spacing:-1px}
-.lead{text-align:center;color:var(--mute);max-width:540px;margin:10px auto 0}
-.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
-.box{border:2px solid #e8e8e8;border-radius:24px;padding:22px}
-.box .ic{width:46px;height:46px;border-radius:50%;background:var(--red);display:grid;place-items:center;margin-bottom:12px}
-.box .ic svg{width:21px;height:21px;fill:#fff}
-.box h3{font-size:17px;margin-bottom:4px}
-.box p{color:var(--mute);font-size:14.5px}
-@media(max-width:820px){.feat{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:460px){.box{padding:16px}.box h3{font-size:15.5px}.box p{font-size:13.5px}}
-
-.dark{background:var(--dark);color:#fff;border-radius:clamp(36px,7vw,80px)}
-.dark .lead{color:#bbb}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:34px}
-.st{background:#383838;border-radius:24px;padding:22px}
-.st .n{font-size:42px;font-weight:900;color:var(--red);line-height:1}
-.st h3{margin:8px 0 4px;font-size:17px}
-.st p{color:#bbb;font-size:14.5px}
-
-.faq{max-width:720px;margin:34px auto 0}
-details{background:#fff;border:2px solid #e8e8e8;border-radius:60px;padding:14px 16px 14px 20px;margin-bottom:12px}
-details[open]{border-radius:26px;border-color:var(--red)}
-summary{font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";flex:none;min-width:38px;height:30px;border-radius:30px;background:var(--red);color:#fff;font-size:20px;display:grid;place-items:center}
-details[open] summary::after{content:"\2212"}
-details p{margin-top:10px;color:var(--mute)}
-.final{text-align:center}
-
-footer{background:#161616;color:#aaa;padding:40px 0 26px;font-size:14px}
-footer .row{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
-footer .logo{color:#fff}
-footer ul{list-style:none;display:flex;gap:10px;flex-wrap:wrap}
-footer ul a{display:block;background:#242424;color:#ddd;padding:9px 16px;border-radius:30px;text-decoration:none}
-footer ul a:hover{background:var(--red);color:#fff}
-footer small{display:block;margin-top:26px;padding-top:18px;border-top:1px solid #2e2e2e;color:#777;line-height:1.6}
-
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
-.dr{position:fixed;top:0;left:0;bottom:0;width:min(82%,320px);background:#fff;z-index:50;transform:translateX(-100%);transition:transform .25s;overflow:auto;padding-top:8px}
-body.open .ov{opacity:1;pointer-events:auto}
-body.open .dr{transform:none}
-body.open{overflow:hidden}
-.dr a{display:block;padding:17px 24px;font-size:17px;text-decoration:none}
-.dr a:first-child{background:var(--tint);color:var(--red);font-weight:700}
-.dr a:active{background:var(--soft)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-
-.nodev{display:none}
-[data-dev] .apkok,[data-dev] .hd{display:none}
-[data-dev] .nodev{display:block}
-.nodev .box2{background:#fff;border:2px solid #222;border-radius:24px;padding:18px;max-width:520px;margin:0 auto;text-align:left}
-.nodev .m{display:none;font-size:15px;color:#333}
-[data-dev=tv] .m-tv,[data-dev=other] .m-other,[data-dev=old] .m-old{display:block}
-[data-dev=old] .btns{display:none}
-.nodev .btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-.nodev button{border:0;background:var(--red);color:#fff;font-weight:700;border-radius:30px;padding:12px 20px;font-size:15px;cursor:pointer}
-.nodev button.o{background:#fff;color:#222;border:2px solid #222}
-.chip{z-index:3}
-.c1{left:-2px;top:26px}
-.c2{top:6px}
-[data-dev=32bit] .m-32,[data-dev=old] .force,[data-dev=32bit] .force{display:block}
-[data-dev=32bit] .btns{display:none}
-.nodev .force{font-size:13px;margin-top:10px}
-.nodev .force a{color:var(--red);font-weight:700}
-.mini{display:none;align-items:center;gap:8px;margin-top:20px;background:#242424;color:#ddd;border-radius:30px;padding:10px 16px;font-size:13px;text-decoration:none}
-.mini svg{width:16px;height:16px;fill:currentColor;flex:none}
-html:not([data-dev=tv]):not([data-dev=other]) .mini{display:inline-flex}
-[data-dev=old] .mini,[data-dev=32bit] .mini{background:var(--red);color:#fff}
-.nodev .force2{display:none;margin-top:12px}
-[data-dev=old] .force2,[data-dev=32bit] .force2{display:block}
-.nodev .force2 a{display:inline-block;background:var(--red);color:#fff;text-decoration:none;font-weight:700;border-radius:30px;padding:12px 20px}
-</style><script type="application/ld+json">
+<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MobileApplication","name":"Video Downloader","operatingSystem":"Android 10 or newer","applicationCategory":"MultimediaApplication","description":"Download the free Video Downloader app for Android. Paste a link, choose MP4 or MP3 and save it to your phone. No signup, Android 10 or newer.","url":"https://videodownloader.devs.surf/","downloadUrl":"https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
 <script type="application/ld+json">
@@ -160,124 +33,349 @@ html:not([data-dev=tv]):not([data-dev=other]) .mini{display:inline-flex}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Video Downloader","url":"https://videodownloader.devs.surf/","logo":"https://videodownloader.devs.surf/icon-512.png"}
 </script>
-</head><body>
+<script>
+if(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())location.replace('app.html');
+(function(){var ua=navigator.userAgent||'';var and=/Android/i.test(ua);var tv=/(\bTV\b|AFT[A-Z]|SMART-?TV|BRAVIA|Tizen|Web0S|CrKey|GoogleTV)/i.test(ua);var m=ua.match(/Android\s+(\d+)/i);var v=m?parseInt(m[1],10):0;var d='';if(tv)d='tv';else if(!and)d='other';else if(v&&v<10)d='old';if(d)document.documentElement.setAttribute('data-dev',d);})();
+(function(){var u=navigator.userAgentData;if(!u||!u.getHighEntropyValues||!/Android/i.test(navigator.userAgent))return;u.getHighEntropyValues(['platformVersion','bitness']).then(function(v){var h=document.documentElement;if(h.getAttribute('data-dev'))return;var pv=parseInt(String(v.platformVersion||'0').split('.')[0],10);var d='';if(pv&&pv<10){d='old'}else if(String(v.bitness)==='32'){d='32bit'}if(d)h.setAttribute('data-dev',d)}).catch(function(){})})();
+</script>
+<style>
+:root{--red:#d6293e;--red2:#b81f34;--tint:#fff1f3;--ink:#1c1c1e;--mute:#5f6368;--line:#e6e6e8;--soft:#f6f6f7;--dark:#1f1f22}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{font-family:Roboto,Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+svg{display:block}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.c{width:min(1120px,100% - 32px);margin-inline:auto}
+.ico{width:22px;height:22px;fill:currentColor;flex:none}
+.lg{width:36px;height:36px;border-radius:10px;flex:none}
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+/* header */
+.top{position:sticky;top:0;z-index:30;background:#fff;border-bottom:2px solid var(--line)}
+.bar{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;height:66px}
+.mb{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;cursor:pointer}
+.mb svg{width:26px;height:26px;stroke:#333;stroke-width:2.4;fill:none;stroke-linecap:round}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:900;font-size:19px;letter-spacing:-.5px;justify-self:center;white-space:nowrap}
+.nav{display:none;gap:26px;justify-self:center;font-weight:500;font-size:15px}
+.nav a{text-decoration:none;color:#333}
+.nav a:hover{color:var(--red)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--red);color:#fff;font-weight:700;border-radius:999px;padding:14px 26px;text-decoration:none;border:2px solid var(--red);font-size:16px;cursor:pointer;transition:background .15s,transform .1s}
+.btn:hover{background:var(--red2);border-color:var(--red2)}
+.btn:active{transform:scale(.98)}
+.btn.sm{padding:10px 18px;font-size:14px}
+.btn.big{padding:18px 34px;font-size:18px}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--ink)}
+.btn.ghost:hover{background:var(--soft);border-color:var(--ink)}
+.btn.white{background:#fff;color:var(--red);border-color:#fff}
+.btn.white:hover{background:var(--tint);border-color:var(--tint)}
+.btn .ico{width:22px;height:22px}
+@media(min-width:900px){.bar{grid-template-columns:auto 1fr auto}.mb{display:none}.nav{display:flex}.brand{justify-self:start}}
+
+/* hero */
+.hero{background:var(--tint);border-radius:0 0 clamp(32px,6vw,72px) clamp(32px,6vw,72px);padding:clamp(34px,6vw,76px) 0 clamp(44px,6vw,84px);overflow:hidden}
+.hgrid{display:grid;gap:44px;align-items:center}
+@media(min-width:900px){.hgrid{grid-template-columns:1.1fr .9fr}}
+.eyebrow{display:inline-block;background:#fff;border:2px solid var(--red);color:var(--red);font-weight:700;font-size:13px;letter-spacing:.4px;border-radius:999px;padding:5px 14px;margin-bottom:18px}
+h1{font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1.05;letter-spacing:-1.5px}
+.lead{font-size:clamp(16px,2.2vw,19px);color:#5b4247;margin-top:16px;max-width:520px}
+.ticks{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:20px 0 26px}
+.ticks li{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f0d4d9;border-radius:999px;padding:6px 14px 6px 10px;font-size:14px;font-weight:700}
+.ticks svg{width:18px;height:18px;fill:var(--red)}
+.note{font-size:13.5px;color:#7b5a60;margin-top:12px}
+.links{margin-top:8px;font-size:14px;color:#7b5a60}
+.links a{color:var(--red);font-weight:700}
+.nodev{display:none}
+.nodev .bx{background:#fff;border:2px solid var(--ink);border-radius:24px;padding:18px;max-width:520px}
+.nodev .m{display:none;font-size:15px;color:#333}
+.nodev .btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nodev button{border:0;background:var(--red);color:#fff;font-weight:700;border-radius:999px;padding:12px 20px;font-size:15px;cursor:pointer}
+.nodev button.o{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.nodev .force,.nodev .force2{display:none;margin-top:12px;font-size:14px}
+.nodev .force a{color:var(--red);font-weight:700}
+.nodev .force2 a{display:inline-block;background:var(--red);color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:12px 20px}
+[data-dev] .apkok{display:none}
+[data-dev] .nodev{display:block}
+[data-dev=tv] .m-tv,[data-dev=other] .m-other,[data-dev=old] .m-old,[data-dev=32bit] .m-32{display:block}
+[data-dev=old] .force2,[data-dev=32bit] .force2,[data-dev=old] .force,[data-dev=32bit] .force{display:block}
+[data-dev=old] .btns,[data-dev=32bit] .btns{display:none}
+[data-dev] .band{display:none}
+[data-dev=tv] #versions,[data-dev=other] #versions{display:none}
+
+/* phone mockup */
+.hvis{position:relative;display:flex;justify-content:center;padding:8px 0}
+.phone{width:268px;height:520px;border:8px solid var(--ink);border-radius:42px;background:#fff;position:relative;overflow:hidden}
+.pscr{padding:18px 14px 0;height:100%;display:flex;flex-direction:column;gap:10px;font-size:11px}
+.pt{display:flex;align-items:center;gap:7px;font-weight:900;font-size:13px}
+.pt .lg{width:22px;height:22px;border-radius:6px}
+.pf{background:var(--soft);border:2px solid var(--ink);border-radius:999px;padding:8px 8px 8px 12px;display:flex;justify-content:space-between;align-items:center;color:#777}
+.pf i{font-style:normal;background:var(--red);color:#fff;font-weight:700;border-radius:999px;padding:5px 10px}
+.pc{border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.pc .th{height:96px;background:#e9e9ea;display:grid;place-items:center}
+.pc .th u{width:38px;height:38px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+.pc .th u::after{content:"";border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
+.pc .tx{padding:8px 10px}
+.pc .tx b{display:block;font-size:12px}
+.pc .tx span{color:#888}
+.pq{display:flex;gap:6px}
+.pq i{font-style:normal;font-weight:700;border:2px solid var(--line);border-radius:999px;padding:5px 11px}
+.pq i.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.pd{background:var(--red);color:#fff;text-align:center;font-weight:700;font-size:13px;padding:11px;border-radius:999px}
+.ptabs{margin-top:auto;margin-inline:-14px;border-top:2px solid var(--line);display:flex;padding:10px 4px 14px;background:#fff}
+.ptabs span{flex:1;text-align:center;font-weight:700;color:#888;font-size:10.5px}
+.ptabs span.on{color:var(--red)}
+.chip{position:absolute;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 16px;font-weight:900;font-size:14px;z-index:3}
+.chip.a{left:calc(50% - 190px);top:70px}
+.chip.b{right:calc(50% - 186px);bottom:90px;background:var(--red);border-color:var(--red);color:#fff}
+@media(max-width:480px){.chip.a{left:2px}.chip.b{right:2px}}
+
+/* sections */
+.sec{padding:clamp(56px,8vw,96px) 0}
+.h2{font-size:clamp(28px,4.4vw,42px);font-weight:900;letter-spacing:-1px;line-height:1.1;text-align:center}
+.sub{color:var(--mute);text-align:center;max-width:560px;margin:12px auto 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:38px}
+.card{border:2px solid var(--line);border-radius:24px;padding:24px;transition:border-color .15s}
+.card:hover{border-color:var(--red)}
+.card .ic{width:48px;height:48px;border-radius:50%;background:var(--red);display:grid;place-items:center;margin-bottom:14px;color:#fff}
+.card h3{font-size:18px;margin-bottom:6px}
+.card p{color:var(--mute);font-size:15px}
+
+.dark{background:var(--dark);color:#fff;border-radius:clamp(32px,6vw,72px)}
+.dark .sub{color:#b9b9bd}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:38px}
+.st{background:#2b2b2f;border-radius:24px;padding:24px}
+.st .n{font-size:46px;font-weight:900;color:var(--red);line-height:1}
+.st h3{margin:10px 0 6px;font-size:18px}
+.st p{color:#b9b9bd;font-size:15px}
+.dark .more{text-align:center;margin-top:26px;font-size:15px}
+.dark .more a{color:#fff;font-weight:700}
+
+.split{display:grid;gap:30px;align-items:center}
+@media(min-width:900px){.split{grid-template-columns:1fr 1fr;gap:56px}}
+.split .h2,.split .sub{text-align:left;margin-left:0}
+.kv{border:2px solid var(--ink);border-radius:24px;overflow:hidden}
+.kv div{display:flex;justify-content:space-between;gap:12px;padding:15px 18px;border-bottom:2px solid var(--line);font-size:15px}
+.kv div:last-child{border-bottom:0}
+.kv span{color:var(--mute)}
+.kv b{color:var(--red);text-align:right}
+.src{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-weight:700;color:var(--red);text-decoration:none}
+.src:hover{text-decoration:underline}
+
+.vers{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:38px;max-width:860px;margin-inline:auto}
+.ver{border:2px solid var(--line);border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:6px}
+.ver.main{border-color:var(--red);background:var(--tint)}
+.ver h3{font-size:20px}
+.ver .tag{font-size:12px;font-weight:700;color:var(--red);letter-spacing:.5px;text-transform:uppercase}
+.ver ul{list-style:none;color:var(--mute);font-size:15px;margin:6px 0 16px}
+.ver li{padding:3px 0}
+.ver .btn{margin-top:auto}
+
+.faq{max-width:760px;margin:36px auto 0}
+details{border:2px solid var(--line);border-radius:60px;padding:14px 16px 14px 22px;margin-bottom:12px;transition:border-color .15s}
+details[open]{border-radius:26px;border-color:var(--red)}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;min-width:38px;height:30px;border-radius:30px;background:var(--red);color:#fff;font-size:20px;display:grid;place-items:center}
+details[open] summary::after{content:"\2212"}
+details p{margin-top:10px;color:var(--mute)}
+
+.band{background:var(--red);color:#fff;border-radius:clamp(28px,5vw,44px);padding:clamp(30px,5vw,60px) 20px;text-align:center}
+.band h2{font-size:clamp(26px,4.2vw,38px);font-weight:900;letter-spacing:-1px;line-height:1.1}
+.band p{margin:10px 0 24px;color:#ffe1e5}
+
+footer{background:#161616;color:#aaa;margin-top:clamp(56px,8vw,96px);padding:48px 0 26px;font-size:14px}
+.fg{display:grid;gap:30px}
+@media(min-width:760px){.fg{grid-template-columns:1.4fr 1fr 1fr 1fr}}
+footer .brand{color:#fff;justify-self:start}
+footer p.tag{margin-top:14px;max-width:300px;line-height:1.6}
+footer h4{color:#fff;font-size:14px;margin-bottom:12px}
+footer ul{list-style:none;display:grid;gap:9px}
+footer a{text-decoration:none}
+footer a:hover{color:#fff}
+.mini{display:none;align-items:center;gap:8px;margin-top:22px;background:#242424;color:#ddd;border-radius:999px;padding:10px 16px;font-size:13px;text-decoration:none}
+.mini svg{width:16px;height:16px;fill:currentColor}
+html:not([data-dev=tv]):not([data-dev=other]) .mini{display:inline-flex}
+[data-dev=old] .mini,[data-dev=32bit] .mini{background:var(--red);color:#fff}
+footer small{display:block;margin-top:26px;padding-top:18px;border-top:1px solid #2e2e2e;color:#777;line-height:1.6}
+
+/* drawer */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.dr{position:fixed;top:0;left:0;bottom:0;width:min(82%,320px);background:#fff;z-index:50;transform:translateX(-100%);transition:transform .25s;overflow:auto;padding-top:8px}
+body.open .ov{opacity:1;pointer-events:auto}
+body.open .dr{transform:none}
+body.open{overflow:hidden}
+.dr a{display:block;padding:16px 24px;font-size:17px;text-decoration:none}
+.dr a.first{background:var(--tint);color:var(--red);font-weight:700}
+.dr hr{border:0;border-top:2px solid var(--line);margin:8px 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="ic" viewBox="0 0 1024 1024"><rect width="1024" height="1024" rx="230" fill="#d6293e"/><g fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-linecap="round"><rect x="462" y="250" width="100" height="220" rx="30" stroke="none"/><path d="M352 430H672L512 650Z" stroke-width="50"/><path d="M340 750H684" stroke-width="64" fill="none"/></g></symbol>
 <symbol id="dl" viewBox="0 0 24 24"><path d="M11 3h2v9.2l3.6-3.6L18 10l-6 6-6-6 1.4-1.4L11 12.2zM5 19h14v2H5z"/></symbol>
-</svg>
+<symbol id="ck" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8z"/></symbol>
+<symbol id="se" viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></symbol>
+<symbol id="mu" viewBox="0 0 24 24"><path d="M9 3v10.5a3.5 3.5 0 1 0 2 3.2V7h6V3z"/></symbol>
+<symbol id="be" viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.1-1.6-5.6-4.5-6.3V4a1.5 1.5 0 0 0-3 0v.7C7.600 5.400 6 7.900 6 11v5l-2 2v1h16v-1z"/></symbol>
+<symbol id="pl" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+<symbol id="sh" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5z"/></symbol>
+<symbol id="co" viewBox="0 0 24 24"><path d="M9.4 16.6L4.800 12l4.600-4.600L8 6l-6 6 6 6zm5.200 0l4.600-4.600-4.600-4.600L16 6l6 6-6 6z"/></symbol>
+</defs></svg>
 
 <div class="ov"></div>
 <nav class="dr" aria-label="Menu">
-<a href="#download">Download APK</a>
+<a class="first" href="#download">Download APK</a>
 <a href="#features">Features</a>
-<a href="#how">How to install</a>
+<a href="#how">How it works</a>
+<a href="#privacy">Privacy</a>
 <a href="#faq">FAQ</a>
-<a href="about.html">About</a><a href="install-guide.html">Install guide</a><a href="how-to-use.html">How to use</a><a href="terms.html">Terms of Service</a>
+<hr>
+<a href="about.html">About</a>
+<a href="install-guide.html">Install guide</a>
+<a href="how-to-use.html">How to use</a>
+<a href="terms.html">Terms of Service</a>
 <a href="privacy.html">Privacy Policy</a>
 <a href="dmca.html">DMCA &amp; Copyright</a>
 <a href="contact.html">Contact</a>
 </nav>
 
-<header>
-<button class="mb" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-<a class="logo" href="#"><svg class="lg"><use href="#ic"/></svg>Video Downloader</a>
-<a class="hd" href="#download" aria-label="Download"><svg><use href="#dl"/></svg></a>
-</header>
+<header class="top"><div class="c bar">
+<button class="mb" aria-label="Open menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+<a class="brand" href="#top"><svg class="lg"><use href="#ic"/></svg>Video Downloader</a>
+<nav class="nav" aria-label="Main"><a href="#features">Features</a><a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a></nav>
+<a class="btn sm apkok" href="#download">Download</a>
+</div></header>
 
-<div class="hero"><div class="c">
-<h1>Download Video Downloader APK for Free on Android</h1>
-<div class="badge"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8z"/></svg>Free &middot; No signup</div>
-<p class="sub">Paste a link, pick MP4 or MP3, and save it to your phone.</p>
-
-<div class="stage" aria-hidden="true">
-<div class="chip c1">MP4</div><div class="chip c2">MP3</div>
-<div class="phone">
-<div class="ph-top"><svg class="lg"><use href="#ic"/></svg>Video Downloader</div>
-<div class="ph-s">Paste link here...<b>Get</b></div>
-<div class="ph-t"><i></i></div>
-<div class="ph-l"></div><div class="ph-l s"></div>
-<div class="ph-b">Download</div>
-</div>
-<div class="qc"><h5>Select quality</h5><div>MP3 - Audio</div><div>MP4 - 720p</div><div class="on">MP4 - 1080p</div></div>
-</div>
-
+<main>
+<section class="hero" id="top"><div class="c hgrid">
+<div>
+<span class="eyebrow">Video Downloader APK</span>
+<h1>Free Video and Audio Downloader for Android</h1>
+<p class="lead">Paste a link or search, pick MP4 or MP3, and save it to your phone. Everything runs on your device.</p>
+<ul class="ticks">
+<li><svg><use href="#ck"/></svg>Free, no signup</li>
+<li><svg><use href="#ck"/></svg>No ads or tracking</li>
+<li><svg><use href="#ck"/></svg>Open source</li>
+</ul>
 <div id="download">
 <div class="apkok">
-<a class="big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg><use href="#dl"/></svg>Download APK</a>
-<p class="note">Android 10 or newer &middot; Free &middot; about 65 MB</p>
-<a class="rep" href="mailto:youtubevideodownloader@atomicmail.io?subject=Installation%20error">Report an installation error</a>
+<a class="btn big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg class="ico"><use href="#dl"/></svg>Download APK</a>
+<p class="note">Android 10 or newer &middot; 64-bit &middot; about 65 MB</p>
+<p class="links"><a href="install-guide.html">How to install</a> &nbsp;&middot;&nbsp; <a href="#versions">Older phone?</a> &nbsp;&middot;&nbsp; <a href="mailto:youtubevideodownloader@atomicmail.io?subject=Installation%20error">Report an installation error</a></p>
 </div>
-<div class="nodev">
-<div class="box2">
+<div class="nodev"><div class="bx">
 <p class="m m-tv"><b>This app is for Android phones and tablets.</b> It does not work on TVs. Open this page on your phone to get it.</p>
 <p class="m m-other"><b>This app is for Android phones and tablets</b> (Android 10 or newer). It cannot be installed on a computer or iPhone. Open this page on your Android phone to download it.</p>
 <p class="m m-old"><b>Your Android version is older than 10.</b> Use the Legacy APK below. It works on Android 7.1 and newer.</p>
 <p class="m m-32"><b>Your phone looks like a 32-bit device.</b> Use the Legacy APK below. It works on 32-bit and 64-bit phones.</p>
-<p class="m force2"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk">Download Legacy APK</a></p>
-<p class="m force"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk">Try downloading anyway</a></p>
-<div class="btns"><button id="cp" type="button">Copy link</button><button id="sh" class="o" type="button">Share</button></div>
-</div>
-</div>
-</div>
+<p class="force2"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk">Download Legacy APK</a></p>
+<p class="force"><a href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk">Try downloading the standard APK anyway</a></p>
+<div class="btns"><button id="cp" type="button">Copy link</button><button id="shr" class="o" type="button">Share</button></div>
 </div></div>
+</div>
+</div>
+<div class="hvis" aria-hidden="true">
+<span class="chip a">MP4</span><span class="chip b">MP3</span>
+<div class="phone"><div class="pscr">
+<div class="pt"><svg class="lg"><use href="#ic"/></svg>Video Downloader</div>
+<div class="pf">Search videos or paste a link<i>Search</i></div>
+<div class="pc"><div class="th"><u></u></div><div class="tx"><b>Your video title</b><span>Channel &middot; 5:13</span></div></div>
+<div class="pq"><i>1080p</i><i class="on">720p</i><i>MP3</i></div>
+<div class="pd">Download</div>
+<div class="ptabs"><span class="on">Home</span><span>Search</span><span>Downloads</span><span>More</span></div>
+</div></div>
+</div>
+</div></section>
 
-<section class="s" id="features"><div class="c">
-<h2 class="h">Why Video Downloader</h2>
-<p class="lead">A simple app that does one thing well.</p>
-<div class="feat">
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div><h3>Fast</h3><p>Paste a link and get your options in seconds.</p></div>
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5z"/></svg></div><h3>No signup</h3><p>No account needed. Just paste and go.</p></div>
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M9 3v10.5a3.5 3.5 0 1 0 2 3.2V7h6V3z"/></svg></div><h3>MP4 &amp; MP3</h3><p>Save the video, or just the audio.</p></div>
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5zM2 12l10 5 10-5-2-1-8 4-8-4zM2 17l10 5 10-5-2-1-8 4-8-4z"/></svg></div><h3>Quality choice</h3><p>Pick up to 1080p when the video has it.</p></div>
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/></svg></div><h3>On your phone</h3><p>Downloads run on your device, not on our servers.</p></div>
-<div class="box"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8z"/></svg></div><h3>Clean &amp; simple</h3><p>No clutter. One box, one button.</p></div>
+<section class="sec" id="features"><div class="c">
+<h2 class="h2">Everything you need, nothing you don&rsquo;t</h2>
+<p class="sub">A simple app that does one thing well.</p>
+<div class="grid">
+<div class="card"><div class="ic"><svg class="ico"><use href="#se"/></svg></div><h3>Paste a link or search</h3><p>Paste a link from many websites, or search for videos right inside the app.</p></div>
+<div class="card"><div class="ic"><svg class="ico"><use href="#mu"/></svg></div><h3>MP4 and MP3</h3><p>Save the video in up to 1080p when it is available, or keep just the audio.</p></div>
+<div class="card"><div class="ic"><svg class="ico"><use href="#be"/></svg></div><h3>Works in the background</h3><p>Leave the app while a download finishes. Progress shows in your notifications.</p></div>
+<div class="card"><div class="ic"><svg class="ico"><use href="#pl"/></svg></div><h3>Built-in player</h3><p>Play your videos and music from the Downloads tab. No extra app needed.</p></div>
+<div class="card"><div class="ic"><svg class="ico"><use href="#sh"/></svg></div><h3>Private by design</h3><p>It runs on your phone. No account, no tracking and no download servers.</p></div>
+<div class="card"><div class="ic"><svg class="ico"><use href="#co"/></svg></div><h3>Open source</h3><p>The code is public, and the app is built on the open-source tools yt-dlp and FFmpeg.</p></div>
 </div></div></section>
 
-<section class="s dark" id="how"><div class="c">
-<h2 class="h">How to install</h2>
-<p class="lead">It takes about a minute.</p>
+<section class="sec dark" id="how"><div class="c">
+<h2 class="h2">How it works</h2>
+<p class="sub">Three simple steps.</p>
 <div class="steps">
-<div class="st"><div class="n">1</div><h3>Download the APK</h3><p>Tap the red button. The file is saved in your Downloads.</p></div>
-<div class="st"><div class="n">2</div><h3>Allow install</h3><p>Open the file. If Android asks, allow &ldquo;Install unknown apps&rdquo; for your browser or Files app.</p></div>
-<div class="st"><div class="n">3</div><h3>Paste a link</h3><p>Open the app, paste a video link and tap Get Video.</p></div>
-<div class="st"><div class="n">4</div><h3>Choose and save</h3><p>Pick MP4 or MP3 and tap Download. Files go to Downloads/Video Downloader.</p></div>
-</div><p class="lead" style="margin-top:26px"><a href="install-guide.html" style="color:#fff;font-weight:700">Full install guide</a> &nbsp;&middot;&nbsp; <a href="how-to-use.html" style="color:#fff;font-weight:700">How to use the app</a></p></div></section>
+<div class="st"><div class="n">1</div><h3>Install the app</h3><p>Download the APK, open it and allow the install. It takes about a minute.</p></div>
+<div class="st"><div class="n">2</div><h3>Paste or search</h3><p>Paste a video link, or search inside the app and tap Download on a result.</p></div>
+<div class="st"><div class="n">3</div><h3>Choose and save</h3><p>Pick MP4 or MP3. Files are saved in Downloads/Video Downloader.</p></div>
+</div>
+<p class="more"><a href="install-guide.html">Full install guide</a> &nbsp;&middot;&nbsp; <a href="how-to-use.html">How to use the app</a></p>
+</div></section>
 
-<section class="s" id="faq"><div class="c">
-<h2 class="h">Questions?</h2>
-<div class="faq">
-<details><summary>Is it free?</summary><p>Yes. No signup and no payment.</p></details>
-<details><summary>Why do I need to install an APK?</summary><p>Apps like this are not available on Google Play, so you install the APK directly. Android shows a warning for any app installed this way. Please download it only from this page.</p></details>
-<details><summary>Which websites work?</summary><p>YouTube and many other sites that yt-dlp supports, for example Vimeo, Dailymotion, Reddit and TikTok. Support varies and can break when a site changes. Adult sites, live cam sites, paid-subscription sites and DRM-protected streaming services are blocked.</p></details>
-<details><summary>Which formats are available?</summary><p>MP4 in up to 1080p (depending on the video) and MP3 audio.</p></details>
-<details><summary>Does it work on iPhone or computer?</summary><p>Not yet. The app needs Android 10 or newer.</p></details>
-<details><summary>Can I download anything?</summary><p>Only download content that you own or have permission to use. Videos belong to their original creators.</p></details>
+<section class="sec" id="privacy"><div class="c split">
+<div>
+<h2 class="h2">Private by design</h2>
+<p class="sub">The work happens on your phone. Your links and files do not pass through our servers, because we do not run download servers.</p>
+<a class="src" href="https://github.com/YouTube-VideoAudio/Downloader"><svg class="ico"><use href="#co"/></svg>View the source code</a>
+</div>
+<div class="kv" role="list">
+<div role="listitem"><span>Account or sign-up</span><b>None</b></div>
+<div role="listitem"><span>Ads</span><b>None</b></div>
+<div role="listitem"><span>Analytics and tracking</span><b>None</b></div>
+<div role="listitem"><span>Where downloads run</span><b>On your phone</b></div>
+<div role="listitem"><span>Where files are saved</span><b>Your Downloads folder</b></div>
 </div>
 </div></section>
 
-<section class="s final" style="padding-top:0"><div class="c">
-<div class="apkok"><a class="big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg><use href="#dl"/></svg>Download APK</a></div>
+<section class="sec" id="versions" style="padding-top:0"><div class="c">
+<h2 class="h2">Choose your version</h2>
+<p class="sub">Most phones use the standard APK. Older phones need the Legacy APK.</p>
+<div class="vers">
+<div class="ver main"><span class="tag">Recommended</span><h3>Standard APK</h3>
+<ul><li>Android 10 or newer</li><li>64-bit phones</li><li>About 65 MB</li></ul>
+<a class="btn" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg class="ico"><use href="#dl"/></svg>Download</a></div>
+<div class="ver"><span class="tag">Older phones</span><h3>Legacy APK</h3>
+<ul><li>Android 7.1 to 9</li><li>32-bit and 64-bit phones</li><li>Larger file</li></ul>
+<a class="btn ghost" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk"><svg class="ico"><use href="#dl"/></svg>Download</a></div>
+</div>
 </div></section>
+
+<section class="sec" id="faq" style="padding-top:0"><div class="c">
+<h2 class="h2">Questions?</h2>
+<div class="faq">
+<details><summary>Is it free?</summary><p>Yes. No signup, no payment and no ads.</p></details>
+<details><summary>Why do I need to install an APK?</summary><p>Apps like this are not available on Google Play, so you install the APK directly. Android shows a warning for any app installed this way. Please download it only from this page.</p></details>
+<details><summary>Is it safe?</summary><p>The app needs no account, runs on your phone and its source code is public. Install it only from this website, and only download content you have permission to use.</p></details>
+<details><summary>Which websites work?</summary><p>YouTube and many other sites that yt-dlp supports, for example Vimeo, Dailymotion, Reddit and TikTok. Support varies and can break when a site changes. Adult sites, live cam sites, paid-subscription sites and DRM-protected streaming services are blocked.</p></details>
+<details><summary>Which formats are available?</summary><p>MP4 in up to 1080p, depending on the video, and MP3 audio.</p></details>
+<details><summary>Does it work on iPhone or computer?</summary><p>Not yet. The app needs Android 10 or newer, or the Legacy APK on Android 7.1 to 9.</p></details>
+<details><summary>Can I download anything?</summary><p>Only download content that you own or have permission to use. Videos belong to their original creators. See our <a href="terms.html">Terms</a> and <a href="dmca.html">DMCA page</a>.</p></details>
+</div>
+</div></section>
+
+<section class="c band-wrap" style="margin-top:0"><div class="band">
+<h2>Get Video Downloader for Android</h2>
+<p>Free. No signup. About a minute to install.</p>
+<a class="btn white big" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader.apk"><svg class="ico"><use href="#dl"/></svg>Download APK</a>
+</div></section>
+</main>
 
 <footer><div class="c">
-<div class="row">
-<a class="logo" href="#"><svg class="lg"><use href="#ic"/></svg>Video Downloader</a>
-<ul><li><a href="about.html">About</a></li><li><a href="install-guide.html">Install guide</a></li><li><a href="how-to-use.html">How to use</a></li><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="dmca.html">DMCA</a></li><li><a href="contact.html">Contact</a></li></ul>
+<div class="fg">
+<div><a class="brand" href="#top"><svg class="lg"><use href="#ic"/></svg>Video Downloader</a><p class="tag">A free, independent Android app that saves videos and audio to your phone.</p></div>
+<div><h4>Product</h4><ul><li><a href="#download">Download</a></li><li><a href="#features">Features</a></li><li><a href="#how">How it works</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+<div><h4>Help</h4><ul><li><a href="install-guide.html">Install guide</a></li><li><a href="how-to-use.html">How to use</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+<div><h4>Legal</h4><ul><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="dmca.html">DMCA</a></li></ul></div>
 </div>
-<a class="mini" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v9.2l3.6-3.6L18 10l-6 6-6-6 1.4-1.4L11 12.2zM5 19h14v2H5z"/></svg><span>Legacy APK &middot; Android 7.1 to 9, 32-bit phones &middot; about 100 MB</span></a>
+<a class="mini" href="https://github.com/YouTube-VideoAudio/Downloader/releases/download/latest/Video-Downloader-Legacy.apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v9.2l3.6-3.6L18 10l-6 6-6-6 1.4-1.4L11 12.2zM5 19h14v2H5z"/></svg><span>Legacy APK &middot; Android 7.1 to 9, 32-bit phones</span></a>
 <small>&copy; 2026 Video Downloader. Not affiliated with or endorsed by YouTube or Google. All videos and thumbnails are the property of their respective owners. Please respect copyright.</small>
 </div></footer>
 
 <script>
-const b=document.body;
-document.querySelector('.mb').onclick=()=>b.classList.add('open');
-document.querySelector('.ov').onclick=()=>b.classList.remove('open');
-document.querySelectorAll('.dr a').forEach(a=>a.addEventListener('click',()=>b.classList.remove('open')));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')b.classList.remove('open')});
-
-var cp=document.getElementById('cp'),sh=document.getElementById('sh');
+var b=document.body;
+document.querySelector('.mb').onclick=function(){b.classList.add('open')};
+document.querySelector('.ov').onclick=function(){b.classList.remove('open')};
+document.querySelectorAll('.dr a').forEach(function(a){a.addEventListener('click',function(){b.classList.remove('open')})});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')b.classList.remove('open')});
 var link=location.href.split('#')[0];
+var cp=document.getElementById('cp'),sh=document.getElementById('shr');
 if(cp)cp.onclick=function(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(function(){cp.textContent='Copied!'}).catch(function(){prompt('Copy this link',link)})}else{prompt('Copy this link',link)}};
 if(sh){if(navigator.share){sh.onclick=function(){navigator.share({title:'Video Downloader',url:link}).catch(function(){})}}else{sh.style.display='none'}}
 </script>
